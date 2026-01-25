@@ -28,11 +28,11 @@ setupRofiConfig() {
         cp -r "$HOME/.config/rofi" "$HOME/.config/rofi-bak"
     fi
     mkdir -p "$HOME/.config/rofi"
-    curl -sSLo "$HOME/.config/rofi/powermenu.sh" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/powermenu.sh
+    curl -sSLo "$HOME/.config/rofi/powermenu.sh" https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/rofi/powermenu.sh
     chmod +x "$HOME/.config/rofi/powermenu.sh"
-    curl -sSLo "$HOME/.config/rofi/config.rasi" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/config.rasi
+    curl -sSLo "$HOME/.config/rofi/config.rasi" https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/rofi/config.rasi
     mkdir -p "$HOME/.config/rofi/themes"
-    curl -sSLo "$HOME/.config/rofi/themes/nord.rasi" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/themes/nord.rasi
-    curl -sSLo "$HOME/.config/rofi/themes/sidetab-nord.rasi" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/themes/sidetab-nord.rasi
-    curl -sSLo "$HOME/.config/rofi/themes/powermenu.rasi" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/themes/powermenu.rasi
+    curl -sSLo "$HOME/.config/rofi/themes/nord.rasi" https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/rofi/themes/nord.rasi
+    curl -sSLo "$HOME/.config/rofi/themes/sidetab-nord.rasi" https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/rofi/themes/sidetab-nord.rasi
+    curl -sSLo "$HOME/.config/rofi/themes/powermenu.rasi" https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/rofi/themes/powermenu.rasi
 }
