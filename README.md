@@ -1,8 +1,5 @@
 # arch-setup
 
-```
-bash <(curl -fsSL https://raw.githubusercontent.com/wattox00/arch-setup/main/dwm-wattox.sh)
-```
 or
 ```
 git clone https://github.com/WattoX00/arch-setup.git
@@ -14,10 +11,11 @@ chmod +x dwm-wattox.sh
 bash dwm-wattox.sh
 ```
 
-it should get all the needed packages
 
 or one liner
  
 ```
-git clone https://github.com/wattox00/arch-setup && cd arch-setup && ./dwm-wattox.sh
+git clone https://github.com/wattox00/arch-setup.git && cd arch-setup && ./dwm-wattox.sh
 ```
+
+it should get all the needed packages
