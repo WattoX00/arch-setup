@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-. ../common-script.sh
-
 installRofi() {
     if ! command_exists rofi; then
     printf "%b\n" "${YELLOW}Installing Rofi...${RC}"
@@ -38,8 +36,3 @@ setupRofiConfig() {
     curl -sSLo "$HOME/.config/rofi/themes/sidetab-nord.rasi" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/themes/sidetab-nord.rasi
     curl -sSLo "$HOME/.config/rofi/themes/powermenu.rasi" https://github.com/ChrisTitusTech/dwm-titus/raw/main/config/rofi/themes/powermenu.rasi
 }
-
-checkEnv
-checkEscalationTool
-installRofi
-setupRofiConfig
