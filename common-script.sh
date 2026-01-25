@@ -72,8 +72,15 @@ checkAURHelper() {
 
             printf "%b\n" "${YELLOW}Installing yay as AUR helper...${RC}"
             "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel git
-            cd /opt && "$ESCALATION_TOOL" git clone https://aur.archlinux.org/yay-bin.git && "$ESCALATION_TOOL" chown -R "$USER":"$USER" ./yay-bin
-            cd yay-bin && makepkg --noconfirm -si
+            YAY_DIR="$HOME/.cache/yay-bin"
+            rm -rf "$YAY_DIR"
+            mkdir -p "$HOME/.cache"
+            cd "$HOME/.cache"
+
+            git clone https://aur.archlinux.org/yay-bin.git
+            cd yay-bin
+            makepkg -si --noconfirm
+
 
             if command_exists yay; then
                 AUR_HELPER="yay"
