@@ -2,7 +2,7 @@
 
 > [!WARNING]  
 > need to fix:
-> curl: (23) Failed writing body;
+> curl: (23) Failed writing body | 
 > mkdir: cannot create directory ... permission denied
 
 or
