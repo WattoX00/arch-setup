@@ -11,7 +11,7 @@ setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
     case "$PACKAGER" in # Install pre-Requisites
         pacman)
-            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot nwg-look feh mate-polkit alsa-utils rofi alacritty xclip thunar tumbler tldr gvfs thunar-archive-plugin dunst feh nwg-look dex xscreensaver xorg-xprop polybar picom xdg-user-dirs xdg-desktop-portal-gtk pipewire pavucontrol gnome-keyring flatpak networkmanager network-manager-applet
+            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot nwg-look feh mate-polkit alsa-utils rofi alacritty xclip thunar tumbler tldr gvfs thunar-archive-plugin dunst feh nwg-look dex xscreensaver xorg-xprop xorg-server xorg-xinit polybar picom xdg-user-dirs xdg-desktop-portal-gtk pipewire pavucontrol gnome-keyring flatpak networkmanager network-manager-applet
             ;;
         *)
             printf "%b\n" "${RED}Unsupported package manager: ""$PACKAGER""${RC}"
@@ -121,53 +121,8 @@ configure_backgrounds() {
     fi
 }
 
-setupDisplayManager() {
-    printf "%b\n" "${YELLOW}Setting up Xorg${RC}"
-    case "$PACKAGER" in
-        pacman)
-            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm xorg-xinit xorg-server
-            ;;
-        *)
-            printf "%b\n" "${RED}Unsupported package manager: $PACKAGER${RC}"
-            exit 1
-            ;;
-    esac
-    printf "%b\n" "${GREEN}Xorg installed successfully${RC}"
-    printf "%b\n" "${YELLOW}Setting up Display Manager${RC}"
-    currentdm="none"
-    for dm in gdm sddm lightdm; do
-        if command -v "$dm" >/dev/null 2>&1 || isServiceActive "$dm"; then
-            currentdm="$dm"
-            break
-        fi
-    done
-    printf "%b\n" "${GREEN}Display Manager Setup: $currentdm${RC}"
-    if [ "$currentdm" = "none" ]; then
-        printf "%b\n" "${YELLOW}--------------------------${RC}" 
-        DM="sddm"
-        case "$PACKAGER" in
-            pacman)
-                "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm "$DM"
-                if [ "$DM" = "lightdm" ]; then
-                    "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm lightdm-gtk-greeter
-                elif [ "$DM" = "sddm" ]; then
-                    :
-                fi
-                ;;
-            *)
-                printf "%b\n" "${RED}Unsupported package manager: $PACKAGER${RC}"
-                exit 1
-                ;;
-        esac
-        printf "%b\n" "${GREEN}$DM installed successfully${RC}"
-        enableService "$DM"
-        
-    fi
-}
-
 checkEnv
 checkEscalationTool
-setupDisplayManager
 setupDWM
 makeDWM
 install_nerd_font
