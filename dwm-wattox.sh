@@ -1,7 +1,9 @@
 #!/bin/sh
 
-. ./common-script.sh
-. ./common-service-script.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+. "$SCRIPT_DIR/common-script.sh"
+. "$SCRIPT_DIR/common-service-script.sh"
 
 setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
