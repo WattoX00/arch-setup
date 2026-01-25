@@ -21,7 +21,7 @@ setupDWM() {
 }
 
 makeDWM() {
-    [ ! -d "$HOME/.local/share" ] && mkdir -p "$HOME/.local/share/"
+    [ ! -d "$HOME/.local/share" ] && sudo mkdir -p "$HOME/.local/share/"
     if [ ! -d "$HOME/.local/share/dwm-wattox" ]; then
 	printf "%b\n" "${YELLOW}DWM-wattox not found, cloning repository...${RC}"
 	cd "$HOME/.local/share/" && git clone https://github.com/WattoX00/dwm-wattox.git # CD to Home directory to install dwm-wattox This path can be changed (e.g. to linux-toolbox directory)
@@ -49,7 +49,7 @@ install_nerd_font() {
 
     # Create the fonts directory if it doesn't exist
     if [ ! -d "$FONT_DIR" ]; then
-        mkdir -p "$FONT_DIR" || {
+        sudo mkdir -p "$FONT_DIR" || {
             printf "%b\n" "${RED}Failed to create directory: $FONT_DIR${RC}"
             return 1
         }
@@ -61,7 +61,7 @@ install_nerd_font() {
         TEMP_DIR=$(mktemp -d)
         curl -sSLo "$TEMP_DIR"/"${FONT_NAME}".zip "$FONT_URL"
         unzip "$TEMP_DIR"/"${FONT_NAME}".zip -d "$TEMP_DIR"
-        mkdir -p "$FONT_DIR"/"$FONT_NAME"
+        sudo mkdir -p "$FONT_DIR"/"$FONT_NAME"
         mv "${TEMP_DIR}"/*.ttf "$FONT_DIR"/"$FONT_NAME"
         fc-cache -fv
         rm -rf "${TEMP_DIR}"
@@ -70,8 +70,8 @@ install_nerd_font() {
 
 clone_config_folders() {
     # Ensure the target directory exists
-    [ ! -d ~/.config ] && mkdir -p ~/.config
-    [ ! -d ~/.local/bin ] && mkdir -p ~/.local/bin
+    [ ! -d ~/.config ] && sudo mkdir -p ~/.config
+    [ ! -d ~/.local/bin ] && sudo mkdir -p ~/.local/bin
     # Copy scripts to local bin
     cp -rf "$HOME/.local/share/dwm-wattox/scripts/." "$HOME/.local/bin/"
 
@@ -95,7 +95,7 @@ configure_backgrounds() {
     BG_DIR="$PIC_DIR/backgrounds"
 
     # Make sure Pictures exists
-    [ ! -d "$PIC_DIR" ] && mkdir -p "$PIC_DIR"
+    [ ! -d "$PIC_DIR" ] && sudo mkdir -p "$PIC_DIR"
 
     # Copy the backgrounds folder from the repo to Pictures
     # Assumes this script runs from the root of your repo

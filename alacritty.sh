@@ -27,7 +27,7 @@ setupAlacrittyConfig() {
     if [ -d "${HOME}/.config/alacritty" ] && [ ! -d "${HOME}/.config/alacritty-bak" ]; then
         cp -r "${HOME}/.config/alacritty" "${HOME}/.config/alacritty-bak"
     fi
-    mkdir -p "${HOME}/.config/alacritty/"
+    sudo mkdir -p "${HOME}/.config/alacritty/"
     curl -sSLo "${HOME}/.config/alacritty/alacritty.toml" "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/alacritty.toml"
     curl -sSLo "${HOME}/.config/alacritty/keybinds.toml" "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/keybinds.toml"
     curl -sSLo "${HOME}/.config/alacritty/nordic.toml" "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/nordic.toml"
