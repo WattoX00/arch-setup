@@ -1,5 +1,10 @@
 # arch-setup
 
+> [!WARNING]  
+> need to fix:
+> curl: (23) Failed writing body
+> mkdir: cannot create directory ... permission denied
+
 or
 ```
 git clone https://github.com/WattoX00/arch-setup.git
@@ -10,7 +15,6 @@ chmod +x dwm-wattox.sh
 
 bash dwm-wattox.sh
 ```
-
 
 or one liner
  
