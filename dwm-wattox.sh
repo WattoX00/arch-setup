@@ -4,6 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 . "$SCRIPT_DIR/common-script.sh"
 . "$SCRIPT_DIR/common-service-script.sh"
+. "$SCRIPT_DIR/alacritty.sh"
 
 setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
@@ -171,3 +172,5 @@ makeDWM
 install_nerd_font
 clone_config_folders
 configure_backgrounds
+installAlacritty
+setupAlacrittyConfig

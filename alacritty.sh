@@ -1,7 +1,5 @@
 #!/bin/sh -e
 
-. ../common-script.sh
-
 installAlacritty() {
     if ! command_exists alacritty; then
     printf "%b\n" "${YELLOW}Installing Alacritty...${RC}"
@@ -35,8 +33,3 @@ setupAlacrittyConfig() {
     curl -sSLo "${HOME}/.config/alacritty/nordic.toml" "https://raw.githubusercontent.com/ChrisTitusTech/dwm-titus/main/config/alacritty/nordic.toml"
     printf "%b\n" "${GREEN}Alacritty configuration files copied.${RC}"
 }
-
-checkEnv
-checkEscalationTool
-installAlacritty
-setupAlacrittyConfig
