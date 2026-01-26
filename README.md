@@ -23,3 +23,14 @@ git clone https://github.com/wattox00/arch-setup.git && cd arch-setup && ./dwm-w
 ```
 
 it should get all the needed packages
+
+
+todo:
+    bibata-modern-ice cursor setup
+    nvim setup
+    todol setup
+
+    packages:
+        pipewire
+        advanced networkmanager
+        barrier?
