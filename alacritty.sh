@@ -23,13 +23,25 @@ installAlacritty() {
 }
 
 setupAlacrittyConfig() {
+    USER_HOME="$(getent passwd "$USER" | cut -d: -f6)"
+    ALAC_DIR="$USER_HOME/.config/alacritty"
+
     printf "%b\n" "${YELLOW}Copying alacritty config files...${RC}"
-    if [ -d "${HOME}/.config/alacritty" ] && [ ! -d "${HOME}/.config/alacritty-bak" ]; then
-        cp -r "${HOME}/.config/alacritty" "${HOME}/.config/alacritty-bak"
+
+    if [ -d "$ALAC_DIR" ] && [ ! -d "$ALAC_DIR-bak" ]; then
+        cp -r "$ALAC_DIR" "$ALAC_DIR-bak"
     fi
-    mkdir -p "${HOME}/.config/alacritty/"
-    curl -sSLo "${HOME}/.config/alacritty/alacritty.toml" "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/alacritty.toml"
-    curl -sSLo "${HOME}/.config/alacritty/keybinds.toml" "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/keybinds.toml"
-    curl -sSLo "${HOME}/.config/alacritty/nordic.toml" "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/nordic.toml"
+
+    mkdir -p "$ALAC_DIR"
+
+    curl -sSLo "$ALAC_DIR/alacritty.toml" \
+        "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/alacritty.toml"
+
+    curl -sSLo "$ALAC_DIR/keybinds.toml" \
+        "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/keybinds.toml"
+
+    curl -sSLo "$ALAC_DIR/nordic.toml" \
+        "https://raw.githubusercontent.com/wattox00/dwm-wattox/main/config/alacritty/nordic.toml"
+
     printf "%b\n" "${GREEN}Alacritty configuration files copied.${RC}"
 }
