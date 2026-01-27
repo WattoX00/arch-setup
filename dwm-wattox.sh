@@ -101,7 +101,7 @@ configure_backgrounds() {
 
     # Copy the backgrounds folder from the repo to Pictures
     # Assumes this script runs from the root of your repo
-    cp -r ~/arch-setup/backgrounds "$BG_DIR"
+    cp -r ~/arch-setup/backgrounds/. "$BG_DIR"
 
     printf "%b\n" "Backgrounds are now available in $BG_DIR"
 }
