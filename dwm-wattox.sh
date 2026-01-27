@@ -73,6 +73,7 @@ clone_config_folders() {
     # Ensure the target directory exists
     [ ! -d ~/.config ] && mkdir -p ~/.config
     [ ! -d ~/.local/bin ] && mkdir -p ~/.local/bin
+
     # Copy scripts to local bin
     cp -rf "$HOME/.local/share/dwm-wattox/scripts/." "$HOME/.local/bin/"
 
@@ -100,10 +101,13 @@ configure_backgrounds() {
 
     # Copy the backgrounds folder from the repo to Pictures
     # Assumes this script runs from the root of your repo
-    cp -r ./backgrounds "$BG_DIR"
+    cp -r ~/arch-setup/backgrounds "$BG_DIR"
 
     printf "%b\n" "Backgrounds are now available in $BG_DIR"
 }
+
+# get permission back to the user from sudo.. in .config and .local folders
+sudo chown -R "$USER:$USER" ~/.config ~/.local
 
 checkEnv
 checkEscalationTool
