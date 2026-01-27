@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/common-service-script.sh"
 . "$SCRIPT_DIR/alacritty.sh"
 . "$SCRIPT_DIR/rofi.sh"
+. "$SCRIPT_DIR/bibata.sh"
 
 setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
@@ -31,16 +32,6 @@ makeDWM() {
 	cd "$HOME/.local/share/dwm-wattox" && git pull
     fi
     "$ESCALATION_TOOL" make clean install # Run make clean install
-}
-
-install_system_fonts() {
-    printf "%b\n" "${YELLOW}Installing minimal system font fallbacks...${RC}"
-
-    sudo pacman -S --needed --noconfirm \
-        noto-fonts-emoji \
-        noto-fonts-cjk
-
-    printf "%b\n" "${GREEN}System fallback fonts installed.${RC}"
 }
 
 install_nerd_font() {
@@ -116,9 +107,9 @@ configure_backgrounds() {
 
 checkEnv
 checkEscalationTool
+installBibata
 setupDWM
 makeDWM
-install_system_fonts
 install_nerd_font
 clone_config_folders
 configure_backgrounds
