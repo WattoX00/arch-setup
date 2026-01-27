@@ -1,20 +1,24 @@
 # arch-setup
 
-> [!WARNING]  
-> need to fix:
-> curl: (23) Failed writing body | 
-> mkdir: cannot create directory ... permission denied
 
-or
-```
-git clone https://github.com/WattoX00/arch-setup.git
+## Installation
 
-cd /arch-setup
+1. Launch Linutil Project with the command:
+    ```bash
+    curl -fsSL https://linutil.github.io/install | bash
+    ```
 
-chmod +x dwm-wattox.sh
+2. Get arch linux server
+3. After a reboot write these commands:
+    ```bash
+    git clone https://github.com/WattoX00/arch-setup.git
 
-bash dwm-wattox.sh
-```
+    cd /arch-setup
+
+    chmod +x dwm-wattox.sh
+
+    bash dwm-wattox.sh
+    ```
 
 or one liner
  
