@@ -33,6 +33,16 @@ makeDWM() {
     "$ESCALATION_TOOL" make clean install # Run make clean install
 }
 
+install_system_fonts() {
+    printf "%b\n" "${YELLOW}Installing minimal system font fallbacks...${RC}"
+
+    sudo pacman -S --needed --noconfirm \
+        noto-fonts-emoji \
+        noto-fonts-cjk
+
+    printf "%b\n" "${GREEN}System fallback fonts installed.${RC}"
+}
+
 install_nerd_font() {
     # Check to see if the MesloLGS Nerd Font is installed (Change this to whatever font you would like)
     FONT_NAME="MesloLGS Nerd Font Mono"
@@ -108,6 +118,7 @@ checkEnv
 checkEscalationTool
 setupDWM
 makeDWM
+install_system_fonts
 install_nerd_font
 clone_config_folders
 configure_backgrounds
