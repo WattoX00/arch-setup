@@ -30,7 +30,6 @@ it should get all the needed packages
 
 
 todo:
-- bibata-modern-ice cursor setup # half done ( needs to only get modern-ice them ) ( or just uninstall the rest at the end )
 - nvim setup
 
   - packages:
