@@ -8,12 +8,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/rofi.sh"
 . "$SCRIPT_DIR/bibata.sh"
 . "$SCRIPT_DIR/todol.sh"
+. "$SCRIPT_DIR/nvim.sh"
 
 setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
     case "$PACKAGER" in # Install pre-Requisites
         pacman)
-            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit alsa-utils rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit polybar picom xdg-user-dirs xdg-desktop-portal-gtk pipewire pavucontrol gnome-keyring flatpak networkmanager network-manager-applet python-pipx
+            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit alsa-utils rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit polybar picom xdg-user-dirs xdg-desktop-portal-gtk pipewire pavucontrol gnome-keyring flatpak networkmanager network-manager-applet python-pipx nvim
             ;;
         *)
             printf "%b\n" "${RED}Unsupported package manager: ""$PACKAGER""${RC}"
@@ -123,3 +124,4 @@ setupAlacrittyConfig
 installRofi
 setupRofiConfig
 installTodol
+installLazyvim
