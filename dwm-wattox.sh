@@ -76,6 +76,9 @@ clone_config_folders() {
     [ ! -d ~/.config ] && mkdir -p ~/.config
     [ ! -d ~/.local/bin ] && mkdir -p ~/.local/bin
 
+    # get permission back to the user from sudo.. in .config and .local folders
+    sudo chown -R "$USER:$USER" ~/.config ~/.local
+
     # Copy scripts to local bin
     cp -rf "$HOME/.local/share/dwm-wattox/scripts/." "$HOME/.local/bin/"
 
@@ -107,9 +110,6 @@ configure_backgrounds() {
 
     printf "%b\n" "Backgrounds are now available in $BG_DIR"
 }
-
-# get permission back to the user from sudo.. in .config and .local folders
-sudo chown -R "$USER:$USER" ~/.config ~/.local
 
 checkEnv
 checkEscalationTool
