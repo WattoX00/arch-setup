@@ -26,12 +26,98 @@ or one liner
 git clone https://github.com/wattox00/arch-setup.git && cd arch-setup && ./dwm-wattox.sh
 ```
 
-it should get all the needed packages
+## Packages
 
+<details>
+<summary>Click to expand</summary>
+🎨 Theming & Appearance
 
-todo:
-- nvim setup
+- Bibata Modern Ice – Cursor theme
 
-  - packages:
-    - pipewire
-    - barrier?
+- feh – Wallpaper management
+
+- nwg-look – GTK theme configuration
+
+- picom – Compositor (transparency, animations)
+
+- polybar – Status bar
+
+🖥 Terminal & Shell Workflow
+
+- Alacritty – Terminal emulator
+
+- Nerd Fonts – Icon and glyph support
+
+🧠 Editor & Development Tools
+
+- LazyVim – Custom Neovim configuration
+
+🔍 Launchers & Notifications
+
+- Rofi – Application launcher
+
+- Dunst – Notification daemon
+
+📁 File Management
+
+- Thunar – File manager
+
+- tumbler – Thumbnail support
+
+- gvfs – Virtual filesystem support
+
+🔊 Audio & Media Utilities
+
+- PipeWire – Audio server
+
+- pavucontrol – Audio control GUI
+
+- alsa-utils – ALSA utilities
+
+🔐 Session & System Utilities
+
+- mate-polkit – PolicyKit authentication agent
+
+- gnome-keyring – Credential storage
+
+- network-manager-applet – NetworkManager tray applet
+
+🧰 Productivity & Miscellaneous
+
+- flameshot – Screenshot utility
+
+- xclip – Clipboard utility
+
+- xdg-user-dirs – Standard user directories
+
+- flatpak – Flatpak support
+
+- python-pipx – Isolated Python application installs
+
+- Todol – Personal task/todo application
+
+🗂 User Configuration
+
+Custom dotfiles and configuration folders
+
+Custom background setup
+</details>
+
+## ❤️ Support
+
+If this project saved you time, taught you something, or made your day a little easier,
+you can support its development here:
+
+👉 **[Buy me a coffee via PayPal](https://www.paypal.com/paypalme/wattox)**
+
+Your support helps keep the project:
+- Actively maintained
+- Continuously improved
+- Free and open source
+
+Thanks for being part of the community 🤝
+
+## 📄 License
+
+This project is licensed under the **MIT License**.  
+See the [LICENSE](LICENSE) file for full details.
