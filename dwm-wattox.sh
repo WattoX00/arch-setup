@@ -100,15 +100,16 @@ clone_config_folders() {
 configure_backgrounds() {
     PIC_DIR="$HOME/Pictures"
     BG_DIR="$PIC_DIR/backgrounds"
+    SC_DIR="$PIC_DIR/screenshots"
 
-    # Make sure Pictures exists
-    [ ! -d "$PIC_DIR" ] && mkdir -p "$PIC_DIR"
+    # Create directories
+    mkdir -p "$BG_DIR" "$SC_DIR"
 
-    # Copy the backgrounds folder from the repo to Pictures
-    # Assumes this script runs from the root of your repo
+    # Copy backgrounds from repo
     cp -r ~/arch-setup/backgrounds/. "$BG_DIR"
 
-    printf "%b\n" "Backgrounds are now available in $BG_DIR"
+    printf "%b\n" "Backgrounds → $BG_DIR"
+    printf "%b\n" "Screenshots → $SC_DIR"
 }
 
 checkEnv
