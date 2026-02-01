@@ -15,7 +15,7 @@ setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
     case "$PACKAGER" in # Install pre-Requisites
         pacman)
-            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit alsa-utils rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit polybar picom xdg-user-dirs xdg-desktop-portal-gtk pipewire pavucontrol gnome-keyring flatpak networkmanager network-manager-applet brightnessctl python-pipx nvim noto-fonts-emoji noto-fonts-cjk firefox
+            "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit polybar picom xdg-user-dirs xdg-desktop-portal-gtk gnome-keyring flatpak networkmanager network-manager-applet brightnessctl python-pipx nvim noto-fonts-emoji noto-fonts-cjk firefox fastfetch pipewire pipewire-alsa pipewire-pulseber alsa-utils pavucontrol
             ;;
         *)
             printf "%b\n" "${RED}Unsupported package manager: ""$PACKAGER""${RC}"
@@ -113,6 +113,12 @@ configure_backgrounds() {
     printf "%b\n" "Screenshots → $SC_DIR"
 }
 
+configure_sound() {
+    systemctl --user enable --now pipewire
+    systemctl --user enable --now pipewire-pulse
+    systemctl --user enable --now wireplumber
+}
+
 # syscheck
 checkEnv
 checkEscalationTool
@@ -148,3 +154,6 @@ installLazyvim
 # Fastfetch setup (run on terminal open)
 setupFastfetchConfig
 setupFastfetchShell
+
+# Configure sound
+configure_sound
