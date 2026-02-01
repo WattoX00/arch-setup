@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+# this fastfetch setup comes from christitus's mybash setup
+
 setupFastfetchConfig() {
     printf "%b\n" "${YELLOW}Copying Fastfetch config files...${RC}"
     if [ -d "${HOME}/.config/fastfetch" ] && [ ! -d "${HOME}/.config/fastfetch-bak" ]; then
