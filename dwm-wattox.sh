@@ -137,7 +137,6 @@ configure_backgrounds
 setupAlacrittyConfig
 
 # rofi config
-installRofi
 setupRofiConfig
 
 # My python todo app
