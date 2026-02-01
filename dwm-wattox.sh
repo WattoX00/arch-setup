@@ -9,6 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/bibata.sh"
 . "$SCRIPT_DIR/todol.sh"
 . "$SCRIPT_DIR/nvim.sh"
+. "$SCRIPT_DIR/fastfetch.sh"
 
 setupDWM() {
     printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
@@ -112,17 +113,39 @@ configure_backgrounds() {
     printf "%b\n" "Screenshots → $SC_DIR"
 }
 
+# syscheck
 checkEnv
 checkEscalationTool
+
+# Bibata cursor
 installBibata
+
+# DWM-Wattox
 setupDWM
 makeDWM
+
+# nerdfont for terminal
 install_nerd_font
+
+# alacritty, rofi, autostart configs
 clone_config_folders
+
+# background setup
 configure_backgrounds
-installAlacritty
+
+# alacritty config
 setupAlacrittyConfig
+
+# rofi config
 installRofi
 setupRofiConfig
+
+# My python todo app
 installTodol
+
+# Nvim setup with lazyvim
 installLazyvim
+
+# Fastfetch setup (run on terminal open)
+setupFastfetchConfig
+setupFastfetchShell
