@@ -1,15 +1,12 @@
-# arch-setup
+# My Arch Linux Installation script
+Makes it cleaner and faster to my liking.
 
+Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
 
 ## Installation
 
-1. Launch Linutil Project with the command:
-    ```bash
-    curl -fsSL https://linutil.github.io/install | bash
-    ```
-
-2. Get arch linux server
-3. After a reboot write these commands:
+1. Assuming you have a base TTY set up with internet and other stuff ( I would recommend christitus arch server setup for that )
+2. After a fresh login write these commands:
     ```bash
     git clone https://github.com/WattoX00/arch-setup.git
 
@@ -19,12 +16,9 @@
 
     bash dwm-wattox.sh
     ```
+3. This will run the isntallation script and will ask for sudo permission a few times
 
-or one liner
- 
-```
-git clone https://github.com/wattox00/arch-setup.git && cd arch-setup && ./dwm-wattox.sh
-```
+See here what window manager it installs: [dwm-wattox](https://github.com/WattoX00/dwm-wattox)
 
 ## Packages
 
@@ -47,6 +41,8 @@ git clone https://github.com/wattox00/arch-setup.git && cd arch-setup && ./dwm-w
 - Alacritty – Terminal emulator
 
 - Nerd Fonts – Icon and glyph support
+
+- Fastfetch - PC specs
 
 🧠 Editor & Development Tools
 
