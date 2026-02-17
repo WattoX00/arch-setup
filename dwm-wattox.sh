@@ -117,7 +117,7 @@ configure_backgrounds() {
 }
 
 configure_sound() {
-  read -rp "Do you want to install and configure PipeWire sound? (y/N): " answer
+  read -rp "Do you want to install and configure PipeWire sound? SKIPP THIS ON PC (y/N): " answer
   case "$answer" in
     [yY]|[yY][eE][sS])
       case "$PACKAGER" in
