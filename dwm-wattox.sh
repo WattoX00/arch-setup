@@ -148,5 +148,7 @@ installTodol
 # Nvim setup with lazyvim
 installLazyvim
 
-# Configure sound
-configure_sound
+# Copy cleanup
+
+cp cleanup.sh "$HOME/cleanup.sh"
+chmod +x "$HOME/cleanup.sh"
