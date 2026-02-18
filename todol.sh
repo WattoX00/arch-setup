@@ -4,6 +4,4 @@
 installTodol() {
   export PATH="$HOME/.local/bin:$PATH"
   pipx install todol
-  pipx ensurepath
 }
-
