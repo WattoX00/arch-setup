@@ -10,7 +10,7 @@ Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
     ```bash
     git clone https://github.com/WattoX00/arch-setup.git
 
-    cd /arch-setup
+    cd arch-setup
 
     chmod +x dwm-wattox.sh
 
