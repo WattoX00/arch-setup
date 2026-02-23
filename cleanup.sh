@@ -28,17 +28,13 @@ configure_sound() {
   esac
 }
 
-# Ensure pipx path
 pipx ensurepath || true
 
-# Configure sound if requested
 configure_sound
 
-# Remove setup directory if it exists
 SETUP_DIR="$HOME/arch-setup"
 if [ -d "$SETUP_DIR" ]; then
   rm -rf "$SETUP_DIR"
 fi
 
-# Remove this script
 rm -- "$0"
