@@ -108,13 +108,6 @@ select_option() {
   return $selected
 }
 
-# @description Displays ArchTitus logo
-# @noargs
-logo() {
-  # This will be shown on every set as user is progressing
-  echo -ne "Please select presetup settings for your system"
-}
-# @description This function will handle file systems. At this movement we are handling only
 # btrfs and ext4. Others will be added in future.
 filesystem() {
   echo -ne "
@@ -288,19 +281,14 @@ userinfo() {
 # Starting functions
 background_checks
 clear
-logo
 userinfo
 clear
-logo
 diskpart
 clear
-logo
 filesystem
 clear
-logo
 timezone
 clear
-logo
 keymap
 
 echo "Setting up mirrors for optimal download"
@@ -391,18 +379,6 @@ elif [[ "${FS}" == "ext4" ]]; then
   mkfs.fat -F32 -n "EFIBOOT" "${partition2}"
   mkfs.ext4 "${partition3}"
   mount -t ext4 "${partition3}" /mnt
-elif [[ "${FS}" == "luks" ]]; then
-  mkfs.fat -F32 "${partition2}"
-  # enter luks password to cryptsetup and format root partition
-  echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat "${partition3}" -
-  # open luks container and ROOT will be place holder
-  echo -n "${LUKS_PASSWORD}" | cryptsetup open "${partition3}" ROOT -
-  # now format that container
-  mkfs.btrfs "${partition3}"
-  # create subvolumes for btrfs
-  mount -t btrfs "${partition3}" /mnt
-  subvolumesetup
-  ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value "${partition3}")
 fi
 
 BOOT_UUID=$(blkid -s UUID -o value "${partition2}")
@@ -443,7 +419,7 @@ echo -ne "
 GRUB BIOS Bootloader Install & Check
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
-  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+  grub-install --target=i386-pc "${DISK}"
 fi
 echo -ne "
 Checking for low memory systems <8G
@@ -561,15 +537,6 @@ echo "$USERNAME created, home directory created, added to wheel and libvirt grou
 echo "$USERNAME:$PASSWORD" | chpasswd
 echo "$USERNAME password set"
 echo $NAME_OF_MACHINE > /etc/hostname
-
-if [[ ${FS} == "luks" ]]; then
-# Making sure to edit mkinitcpio conf if luks is selected
-# add encrypt in mkinitcpio.conf before filesystems in hooks
-    sed -i 's/filesystems/encrypt filesystems/g' /etc/mkinitcpio.conf
-# making mkinitcpio with linux kernel
-    mkinitcpio -p linux-lts
-fi
-
 echo -ne "
 Automated Arch Linux Installer
 Final Setup and Configurations
@@ -577,17 +544,12 @@ GRUB EFI Bootloader Install & Check
 "
 
 if [[ -d "/sys/firmware/efi" ]]; then
-    grub-install --efi-directory=/boot ${DISK}
+   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 fi
 
 echo -ne "
 Creating Grub Boot Menu
 "
-# set kernel parameter for decrypting the drive
-if [[ "${FS}" == "luks" ]]; then
-sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
-fi
-# set kernel parameter for adding splash screen
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 
 echo -e "Updating grub..."
