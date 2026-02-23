@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Redirect stdout and stderr to archsetup.txt and still output to console
 exec > >(tee -i archsetup.txt)
 exec 2>&1
 
@@ -171,8 +170,6 @@ timezone() {
 keymap() {
   echo -ne "
     Please select key board layout from this list"
-  # These are default key maps as presented in official arch repo archinstall
-  # shellcheck disable=SC1010
   options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru se sg ua uk)
 
   select_option "${options[@]}"
@@ -436,7 +433,6 @@ if [[ $TOTAL_MEM -lt 8000000 ]]; then
   chown root /mnt/opt/swap/swapfile
   mkswap /mnt/opt/swap/swapfile
   swapon /mnt/opt/swap/swapfile
-  # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
   echo "/opt/swap/swapfile    none    swap    sw    0    0" >>/mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 fi
 
