@@ -136,31 +136,43 @@ filesystem() {
 
 # @description Detects and sets timezone.
 timezone() {
-  # Added this from arch wiki https://wiki.archlinux.org/title/System_time
-  time_zone="$(curl --fail https://ipapi.co/timezone)"
-  echo -ne "
-    System detected your timezone to be '$time_zone' \n"
-  echo -ne "Is this correct?
-    "
-  options=("Yes" "No")
-  select_option "${options[@]}"
+  echo -ne "\nDetecting timezone automatically...\n"
 
-  case ${options[$?]} in
-  y | Y | yes | Yes | YES)
-    echo "${time_zone} set as timezone"
-    export TIMEZONE=$time_zone
-    ;;
-  n | N | no | NO | No)
-    echo "Please enter your desired timezone e.g. Europe/London :"
+  time_zone="$(curl -fs https://ipapi.co/timezone 2>/dev/null || true)"
+
+  if [[ -n "$time_zone" && -f "/usr/share/zoneinfo/$time_zone" ]]; then
+    echo -ne "\nSystem detected your timezone as: '$time_zone'\n"
+    echo -ne "Is this correct?\n"
+
+    options=("Yes" "No")
+    select_option "${options[@]}"
+    selection=$?
+
+    case $selection in
+    0)
+      echo "$time_zone set as timezone"
+      export TIMEZONE="$time_zone"
+      return
+      ;;
+    1) ;;
+    esac
+  else
+    echo "Automatic detection failed."
+  fi
+
+  # manual fallback
+  while true; do
+    echo -ne "\nEnter your desired timezone (example: Europe/London): "
     read -r new_timezone
-    echo "${new_timezone} set as timezone"
-    export TIMEZONE=$new_timezone
-    ;;
-  *)
-    echo "Wrong option. Try again"
-    timezone
-    ;;
-  esac
+
+    if [[ -f "/usr/share/zoneinfo/$new_timezone" ]]; then
+      echo "$new_timezone set as timezone"
+      export TIMEZONE="$new_timezone"
+      break
+    else
+      echo "Invalid timezone. Please try again."
+    fi
+  done
 }
 # @description Set user's keyboard mapping.
 keymap() {
