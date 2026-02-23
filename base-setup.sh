@@ -431,7 +431,7 @@ echo -ne "
 GRUB BIOS Bootloader Install & Check
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
-  grub-install --boot-directory=/mnt/boot "${DISK}"
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 fi
 echo -ne "
 Checking for low memory systems <8G
