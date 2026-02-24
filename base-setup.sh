@@ -291,8 +291,10 @@ keymap
 echo "Setting up mirrors for optimal download"
 iso=$(curl -4 ifconfig.io/country_code)
 timedatectl set-ntp true
-pacman -Sy
-pacman -S --noconfirm archlinux-keyring #update keyrings to latest to prevent packages failing to install
+pacman -Syy --noconfirm
+pacman -Sy --noconfirm archlinux-keyring
+pacman-key --init
+pacman-key --populate archlinux
 pacman -S --noconfirm --needed pacman-contrib terminus-font
 setfont ter-v18b
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
@@ -301,7 +303,8 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 echo -ne "
 Setting up $iso mirrors for faster downloads
 "
-reflector -a 48 -c "$iso" --score 5 -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+pacman -Syy --noconfirm
 if [[ $(grep -c "Server =" /etc/pacman.d/mirrorlist) -lt 5 ]]; then #check if there are less than 5 mirrors
   cp /etc/pacman.d/mirrorlist.bak /etc/pacman.d/mirrorlist
 fi
@@ -491,7 +494,7 @@ sed -i 's/^#Color/Color\nILoveCandy/' /etc/pacman.conf
 
 #Enable multilib
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
-pacman -Sy --noconfirm --needed
+pacman -Syy --noconfirm
 
 echo -ne "
 Installing Microcode
