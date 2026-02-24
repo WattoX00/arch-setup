@@ -5,18 +5,13 @@ Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
 
 ## Installation
 
-1. Assuming you have a base TTY set up with internet and other stuff ( I would recommend christitus arch server setup for that )
+1. ``` curl -fsSL https://wattox00.github.io/arch-setup.sh | sh ```
 2. After a fresh login write these commands:
     ```bash
-    git clone https://github.com/WattoX00/arch-setup.git
-
-    cd arch-setup
-
-    chmod +x dwm-wattox.sh
-
     bash dwm-wattox.sh
     ```
 3. This will run the isntallation script and will ask for sudo permission a few times
+4. For maximum safety reboot and run ``` bash cleanup.sh ```
 
 See here what window manager it installs: [dwm-wattox](https://github.com/WattoX00/dwm-wattox)
 
