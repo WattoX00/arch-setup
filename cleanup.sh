@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+
+
 configure_sound() {
   read -rp "Do you want to install and configure PipeWire sound? SKIP THIS ON PC (y/N): " answer
   case "$answer" in
@@ -31,6 +33,9 @@ configure_sound() {
 pipx ensurepath || true
 
 configure_sound
+
+cp ~/.local/share/dwm-wattox/.bashrc ~/.bashrc
+source ~/.bashrc
 
 SETUP_DIR="$HOME/arch-setup"
 if [ -d "$SETUP_DIR" ]; then
