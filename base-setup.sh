@@ -528,14 +528,16 @@ echo "$USERNAME:$PASSWORD" | chpasswd
 echo "$USERNAME password set"
 echo $NAME_OF_MACHINE > /etc/hostname
 echo -ne "
-Automated Arch Linux Installer
-Final Setup and Configurations
-GRUB EFI Bootloader Install & Check
+Installing GRUB Bootloader
 "
 
 if [[ -d "/sys/firmware/efi" ]]; then
-   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+else
+    grub-install --target=i386-pc ${DISK}
 fi
+
+grub-mkconfig -o /boot/grub/grub.cfg
 
 echo -ne "
 Creating Grub Boot Menu
