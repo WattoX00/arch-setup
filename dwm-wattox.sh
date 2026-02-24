@@ -150,5 +150,5 @@ installLazyvim
 
 # Copy cleanup
 
-cp cleanup.sh "$HOME/cleanup.sh"
+cp "$HOME/arch-setup/cleanup.sh" "$HOME/cleanup.sh"
 chmod +x "$HOME/cleanup.sh"
