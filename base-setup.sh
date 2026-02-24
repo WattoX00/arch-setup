@@ -386,7 +386,7 @@ if ! mountpoint -q /mnt; then
   exit 1
 fi
 mkdir -p /mnt/boot
-mount -U "${BOOT_UUID}" /mnt/boot/
+mount -U "${partition2}" /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
   echo "Drive is not mounted can not continue"
@@ -432,7 +432,14 @@ fi
 
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
 
-arch-chroot /mnt /bin/bash -c "KEYMAP='${KEYMAP}' /bin/bash" <<EOF
+arch-chroot /mnt /usr/bin/env \
+DISK="${DISK}" \
+KEYMAP="${KEYMAP}" \
+TIMEZONE="${TIMEZONE}" \
+USERNAME="${USERNAME}" \
+PASSWORD="${PASSWORD}" \
+NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
+bash <<EOF
 
 echo -ne "
 Network Setup
