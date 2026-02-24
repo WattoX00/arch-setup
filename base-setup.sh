@@ -413,12 +413,6 @@ echo "
 "
 cat /mnt/etc/fstab
 echo -ne "
-GRUB BIOS Bootloader Install & Check
-"
-if [[ ! -d "/sys/firmware/efi" ]]; then
-  grub-install --target=i386-pc "${DISK}"
-fi
-echo -ne "
 Checking for low memory systems <8G
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
