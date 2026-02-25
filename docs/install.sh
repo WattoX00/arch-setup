@@ -1,5 +1,6 @@
 #!/bin/bash
 
+exec < /dev/tty
 exec > >(tee -i archsetup.txt)
 exec 2>&1
 
