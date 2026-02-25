@@ -5,15 +5,43 @@ Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
 
 ## Installation
 
-1. ``` curl -fsSL https://wattox00.github.io/arch-setup.sh | sh ```
-2. After a fresh login write these commands:
-    ```bash
-    bash dwm-wattox.sh
-    ```
-3. This will run the isntallation script and will ask for sudo permission a few times
-4. For maximum safety reboot and run ``` bash cleanup.sh ```
+1. Run the bootstrap script:
 
-See here what window manager it installs: [dwm-wattox](https://github.com/WattoX00/dwm-wattox)
+   ```bash
+   curl -fsSL https://wattox00.github.io/arch-setup.sh | sh
+   ```
+
+2. Log out and log back in (or start a new shell session), then run:
+
+   ```bash
+   bash dwm-wattox.sh
+   ```
+
+3. Run the cleanup script:
+
+   ```bash
+   bash cleanup.sh
+   ```
+
+> ⚠️ **Note:** A full reboot is **not** required. Logging out and back in is usually sufficient to apply environment and service changes. Reboot only if you encounter issues.
+
+
+### Window Manager
+
+This setup installs a custom build of **[dwm-wattox](https://github.com/WattoX00/dwm-wattox)**.
+
+4. Enjoy! 🎉
+
+## Starting `dwm`
+
+After logging into a TTY session, start `dwm` with:
+
+```bash
+startx
+```
+
+Press **SUPER + /** to open the commands menu  
+(**SUPER** = Windows key)
 
 ## Packages
 
