@@ -538,6 +538,18 @@ echo "$USERNAME created, home directory created, added to wheel and libvirt grou
 echo "$USERNAME:$PASSWORD" | chpasswd
 echo "$USERNAME password set"
 echo $NAME_OF_MACHINE > /etc/hostname
+
+echo -ne "
+Cloning arch-setup repository
+"
+
+su - "$USERNAME" -c "
+cd ~ &&
+git clone https://github.com/wattox00/arch-setup &&
+cd arch-setup &&
+chmod +x dwm-wattox
+"
+
 echo -ne "
 Installing GRUB Bootloader
 "
