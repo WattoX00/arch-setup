@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
-set -e
-
-
+set -euo pipefail
 
 configure_sound() {
   read -rp "Do you want to install and configure PipeWire sound? SKIP THIS ON PC (y/N): " answer
   case "$answer" in
   [yY] | [yY][eE][sS])
-    case "$PACKAGER" in
+
+    case "${PACKAGER:-}" in
     pacman)
-      "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm \
+      "${ESCALATION_TOOL:-sudo}" pacman -S --needed --noconfirm \
         pipewire pipewire-alsa pipewire-pulse wireplumber alsa-utils
       ;;
     *)
@@ -18,9 +17,16 @@ configure_sound() {
       ;;
     esac
 
-    systemctl --user enable --now pipewire
-    systemctl --user enable --now pipewire-pulse
-    systemctl --user enable --now wireplumber
+    # Ensure user systemd session exists
+    if loginctl show-user "$USER" | grep -q "Linger=no"; then
+      echo "Enabling user lingering for proper systemd user session..."
+      sudo loginctl enable-linger "$USER"
+    fi
+
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+
+    systemctl --user daemon-reexec || true
+    systemctl --user enable --now pipewire.service pipewire-pulse.service wireplumber.service
 
     echo "PipeWire sound configured."
     ;;
@@ -30,16 +36,22 @@ configure_sound() {
   esac
 }
 
+echo "Ensuring pipx path..."
 pipx ensurepath || true
 
 configure_sound
 
-cp ~/.local/share/dwm-wattox/.bashrc ~/.bashrc
-source ~/.bashrc
+echo "Installing new bashrc..."
+cp -f ~/.local/share/dwm-wattox/.bashrc ~/.bashrc
+
+echo
+echo "IMPORTANT:"
+echo "Restart your shell or run:"
+echo "  source ~/.bashrc"
+echo
+echo "Setup complete."
 
 SETUP_DIR="$HOME/arch-setup"
-if [ -d "$SETUP_DIR" ]; then
-  rm -rf "$SETUP_DIR"
-fi
+rm -rf "$SETUP_DIR"
 
 rm -- "$0"
