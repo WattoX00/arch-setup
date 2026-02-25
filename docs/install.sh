@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec < /dev/tty
+exec </dev/tty
 exec > >(tee -i archsetup.txt)
 exec 2>&1
 
@@ -167,18 +167,6 @@ timezone() {
     fi
   done
 }
-# @description Set user's keyboard mapping.
-keymap() {
-  echo -ne "
-    Please select key board layout from this list"
-  options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru se sg ua uk)
-
-  select_option "${options[@]}"
-  keymap=${options[$?]}
-
-  echo -ne "Your key boards layout: ${keymap} \n"
-  export KEYMAP=$keymap
-}
 
 # @description Choose whether drive is SSD or not.
 drivessd() {
@@ -287,7 +275,6 @@ filesystem
 clear
 timezone
 clear
-keymap
 
 echo "Setting up mirrors for optimal download"
 iso=$(curl -4 ifconfig.io/country_code)
@@ -437,13 +424,12 @@ fi
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
 
 arch-chroot /mnt /usr/bin/env \
-DISK="${DISK}" \
-KEYMAP="${KEYMAP}" \
-TIMEZONE="${TIMEZONE}" \
-USERNAME="${USERNAME}" \
-PASSWORD="${PASSWORD}" \
-NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
-bash <<EOF
+  DISK="${DISK}" \
+  TIMEZONE="${TIMEZONE}" \
+  USERNAME="${USERNAME}" \
+  PASSWORD="${PASSWORD}" \
+  NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
+  bash <<EOF
 
 echo -ne "
 Network Setup
@@ -477,11 +463,6 @@ timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
 ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
-
-# Set keymaps
-echo "KEYMAP=${KEYMAP}" > /etc/vconsole.conf
-echo "XKBLAYOUT=${KEYMAP}" >> /etc/vconsole.conf
-echo "Keymap set to: ${KEYMAP}"
 
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
