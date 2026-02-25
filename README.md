@@ -8,7 +8,7 @@ Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
 1. Run the bootstrap script:
 
    ```bash
-   curl -fsSL https://wattox00.github.io/arch-setup.sh | sh
+   bash <(curl -fsSL https://wattox00.github.io/arch-setup/install.sh)
    ```
 
 2. Log out and log back in (or start a new shell session), then run:
