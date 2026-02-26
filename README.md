@@ -122,7 +122,7 @@ Press **SUPER + /** to open the commands menu
 
 - python-pipx – Isolated Python application installs
 
-- Todol – Personal task/todo application
+- [Todol](https://github.com/wattox00/todol) – Personal task/todo application
 
 🗂 User Configuration
 
