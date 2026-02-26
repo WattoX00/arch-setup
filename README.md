@@ -8,8 +8,10 @@ Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
 1. Run the bootstrap script:
 
    ```bash
-   bash <(curl -fsSL https://wattox00.github.io/arch-setup/install.sh)
+   bash <(curl -fsSL wattox00.github.io/arch-setup/install.sh)
    ```
+
+After that you will have a basic user, internet and boot setup, you can go ahead and install a desktop manager (like kde plasma), or a windowmanager like dwm-wattox:
 
 2. Log out and log back in (or start a new shell session), then run:
 
@@ -25,6 +27,13 @@ Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
 
 > ⚠️ **Note:** A full reboot is **not** required. Logging out and back in is usually sufficient to apply environment and service changes. Reboot only if you encounter issues.
 
+4. Activate bash config:
+
+```bash
+source .bashrc
+```
+```
+```
 
 ### Window Manager
 
