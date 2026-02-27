@@ -32,8 +32,6 @@ After that you will have a basic user, internet and boot setup, you can go ahead
 ```bash
 source .bashrc
 ```
-```
-```
 
 ### Window Manager
 
