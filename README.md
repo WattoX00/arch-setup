@@ -1,55 +1,81 @@
-# My Arch Linux Installation script
-Makes it cleaner and faster to my liking.
+# Arch Linux Installation Script
 
-Inspired by [ChristitusTech](https://github.com/ChrisTitusTech)
+A streamlined Arch Linux setup script designed to make installation cleaner, faster, and tailored to my workflow.
 
-## Installation
+Inspired by [ChrisTitusTech](https://github.com/ChrisTitusTech).
 
-1. Run the bootstrap script:
+## 🚀 Installation
 
-   ```bash
-   bash <(curl -fsSL wattox00.github.io/arch-setup/install.sh)
-   ```
-
-After that you will have a basic user, internet and boot setup, you can go ahead and install a desktop manager (like kde plasma), or a windowmanager like dwm-wattox:
-
-2. Log out and log back in (or start a new shell session), then run:
-
-   ```bash
-   bash dwm-wattox.sh
-   ```
-
-3. Run the cleanup script:
-
-   ```bash
-   bash cleanup.sh
-   ```
-
-> ⚠️ **Note:** A full reboot is **not** required. Logging out and back in is usually sufficient to apply environment and service changes. Reboot only if you encounter issues.
-
-4. Activate bash config:
+### 1. Run the Bootstrap Script
 
 ```bash
-source .bashrc
+bash <(curl -fsSL wattox00.github.io/arch-setup/install.sh)
 ```
 
-### Window Manager
+This will install and configure:
 
-This setup installs a custom build of **[dwm-wattox](https://github.com/WattoX00/dwm-wattox)**.
+A basic user account
 
-4. Enjoy! 🎉
+Networking
 
-## Starting `dwm`
+Bootloader
 
-After logging into a TTY session, start `dwm` with:
+Essential system configuration
+
+At this point, you are free to continue however you like:
+
+Install your preferred desktop environment
+
+Install your own window manager
+
+Keep it minimal and use it as a server
+
+Customize everything manually
+
+The base system is ready — the rest is up to you.
+
+Optional: Install dwm-wattox
+
+If you want to use my custom window manager setup, follow the steps below.
+
+2. Log out and back in
+
+Start a new shell session, then run:
 
 ```bash
+  bash dwm-wattox.sh
+```
+
+3. Run the cleanup script
+
+```bash
+bash cleanup.sh
+```
+
+⚠️ Note: A full reboot is not required. Logging out and back in is usually enough to apply environment and service changes. Reboot only if you encounter issues.
+
+4. Activate Bash configuration
+
+```bash
+source ~/.bashrc
+```
+
+Window Manager
+
+This setup installs a custom build of
+dwm-wattox
+
+Starting dwm
+
+After logging into a TTY session, start dwm with:
+
 startx
-```
+Keybinding
 
-Press **SUPER + /** to open the commands menu  
-(**SUPER** = Windows key)
+SUPER + / → Open commands menu
+(SUPER = Windows key)
 
+Enjoy! 🎉
 
 ## ❤️ Support
 
