@@ -1,6 +1,6 @@
 #!/bin/bash
 
-exec < /dev/tty
+exec </dev/tty
 exec > >(tee -i archsetup.txt)
 exec 2>&1
 
@@ -325,14 +325,24 @@ umount -A --recursive /mnt # make sure everything is unmounted before we start
 sgdisk -Z "${DISK}"         # zap all on disk
 sgdisk -a 2048 -o "${DISK}" # new gpt disk 2048 alignment
 
-# create partitions
-sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' "${DISK}"  # partition 1 (BIOS Boot Partition)
-sgdisk -n 2::+1GiB --typecode=2:ef00 --change-name=2:'EFIBOOT' "${DISK}" # partition 2 (UEFI Boot Partition)
-sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' "${DISK}"       # partition 3 (Root), default start, remaining
-if [[ ! -d "/sys/firmware/efi" ]]; then                                  # Checking for bios system
-  sgdisk -A 1:set:2 "${DISK}"
+# create partitions depending on boot mode
+if [[ -d /sys/firmware/efi ]]; then
+  # UEFI system → only EFI + root
+  sgdisk -n 1::+1GiB --typecode=1:ef00 --change-name=1:'EFIBOOT' "${DISK}"
+  sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:'ROOT' "${DISK}"
+else
+  # BIOS system → BIOSBOOT + root
+  sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' "${DISK}"
+  sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:'ROOT' "${DISK}"
 fi
-partprobe "${DISK}" # reread partition table to ensure it is correct
+
+if [[ -d /sys/firmware/efi ]]; then
+  partition1=${DISK}1
+  partition2=${DISK}2
+else
+  partition1=${DISK}1
+  partition2=${DISK}2
+fi
 
 # make filesystems
 echo -ne "
@@ -363,24 +373,28 @@ subvolumesetup() {
   mountallsubvol
 }
 
-if [[ "${DISK}" =~ "nvme"|"mmcblk" ]]; then
+if [[ "${DISK}" =~ nvme|mmcblk ]]; then
+  partition1=${DISK}p1
   partition2=${DISK}p2
-  partition3=${DISK}p3
 else
+  partition1=${DISK}1
   partition2=${DISK}2
-  partition3=${DISK}3
 fi
 
 if [[ "${FS}" == "btrfs" ]]; then
-  mkfs.fat -F32 -n "EFIBOOT" "${partition2}"
-  mkfs.btrfs -f "${partition3}"
-  mount -t btrfs "${partition3}" /mnt
+  mkfs.fat -F32 -n "EFIBOOT" "${EFI_PART}"
+  mkfs.btrfs -f "${ROOT_PART}"
+  mount "${ROOT_PART}" /mnt
   subvolumesetup
 elif [[ "${FS}" == "ext4" ]]; then
-  mkfs.fat -F32 -n "EFIBOOT" "${partition2}"
+  if [[ -d /sys/firmware/efi ]]; then
+    mkfs.fat -F32 -n "EFIBOOT" "${EFI_PART}"
+  fi
   mkfs.ext4 "${partition3}"
   mount -t ext4 "${partition3}" /mnt
 fi
+
+mount "${EFI_PART}" /mnt/boot
 
 BOOT_UUID=$(blkid -s UUID -o value "${partition2}")
 
@@ -437,13 +451,13 @@ fi
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
 
 arch-chroot /mnt /usr/bin/env \
-DISK="${DISK}" \
-KEYMAP="${KEYMAP}" \
-TIMEZONE="${TIMEZONE}" \
-USERNAME="${USERNAME}" \
-PASSWORD="${PASSWORD}" \
-NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
-bash <<EOF
+  DISK="${DISK}" \
+  KEYMAP="${KEYMAP}" \
+  TIMEZONE="${TIMEZONE}" \
+  USERNAME="${USERNAME}" \
+  PASSWORD="${PASSWORD}" \
+  NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
+  bash <<EOF
 
 echo -ne "
 Network Setup
