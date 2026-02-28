@@ -336,12 +336,20 @@ else
   sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:'ROOT' "${DISK}"
 fi
 
-if [[ -d /sys/firmware/efi ]]; then
-  partition1=${DISK}1
-  partition2=${DISK}2
+if [[ "${DISK}" =~ nvme|mmcblk ]]; then
+  P1=${DISK}p1
+  P2=${DISK}p2
 else
-  partition1=${DISK}1
-  partition2=${DISK}2
+  P1=${DISK}1
+  P2=${DISK}2
+fi
+
+if [[ -d /sys/firmware/efi ]]; then
+  EFI_PART=$P1
+  ROOT_PART=$P2
+else
+  BIOS_PART=$P1
+  ROOT_PART=$P2
 fi
 
 # make filesystems
@@ -354,19 +362,12 @@ createsubvolumes() {
   btrfs subvolume create /mnt/@home
 }
 
-# @description Mount all btrfs subvolumes after root has been mounted.
-mountallsubvol() {
-  mount -o "${MOUNT_OPTIONS}",subvol=@home "${partition3}" /mnt/home
-}
-
 # @description BTRFS subvolulme creation and mounting.
 subvolumesetup() {
   # create nonroot subvolumes
   createsubvolumes
   # unmount root to remount with subvolume
   umount /mnt
-  # mount @ subvolume
-  mount -o "${MOUNT_OPTIONS}",subvol=@ "${partition3}" /mnt
   # make directories home, .snapshots, var, tmp
   mkdir -p /mnt/home
   # mount subvolumes
@@ -382,27 +383,21 @@ else
 fi
 
 if [[ "${FS}" == "btrfs" ]]; then
-  mkfs.fat -F32 -n "EFIBOOT" "${EFI_PART}"
   mkfs.btrfs -f "${ROOT_PART}"
   mount "${ROOT_PART}" /mnt
-  subvolumesetup
 elif [[ "${FS}" == "ext4" ]]; then
-  if [[ -d /sys/firmware/efi ]]; then
-    mkfs.fat -F32 -n "EFIBOOT" "${EFI_PART}"
-  fi
-  mkfs.ext4 "${partition3}"
-  mount -t ext4 "${partition3}" /mnt
+  mkfs.ext4 "${ROOT_PART}"
+  mount "${ROOT_PART}" /mnt
 fi
 
-mount "${EFI_PART}" /mnt/boot
+if [[ -d /sys/firmware/efi ]]; then
+  mkfs.fat -F32 "${EFI_PART}"
+  mkdir -p /mnt/boot
+  mount "${EFI_PART}" /mnt/boot
+fi
 
 BOOT_UUID=$(blkid -s UUID -o value "${partition2}")
 
-sync
-if ! mountpoint -q /mnt; then
-  echo "ERROR! Failed to mount ${partition3} to /mnt after multiple attempts."
-  exit 1
-fi
 mkdir -p /mnt/boot
 mount -U "${partition2}" /mnt/boot/
 
