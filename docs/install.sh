@@ -356,35 +356,17 @@ fi
 echo -ne "
 Creating Filesystems
 "
-# @description Creates the btrfs subvolumes.
-createsubvolumes() {
-  btrfs subvolume create /mnt/@
-  btrfs subvolume create /mnt/@home
-}
-
-# @description BTRFS subvolulme creation and mounting.
-subvolumesetup() {
-  # create nonroot subvolumes
-  createsubvolumes
-  # unmount root to remount with subvolume
-  umount /mnt
-  # make directories home, .snapshots, var, tmp
-  mkdir -p /mnt/home
-  # mount subvolumes
-  mountallsubvol
-}
-
-if [[ "${DISK}" =~ nvme|mmcblk ]]; then
-  partition1=${DISK}p1
-  partition2=${DISK}p2
-else
-  partition1=${DISK}1
-  partition2=${DISK}2
-fi
 
 if [[ "${FS}" == "btrfs" ]]; then
   mkfs.btrfs -f "${ROOT_PART}"
   mount "${ROOT_PART}" /mnt
+  btrfs subvolume create /mnt/@
+  btrfs subvolume create /mnt/@home
+  umount /mnt
+
+  mount -o ${MOUNT_OPTIONS},subvol=@ "${ROOT_PART}" /mnt
+  mkdir -p /mnt/home
+  mount -o ${MOUNT_OPTIONS},subvol=@home "${ROOT_PART}" /mnt/home
 elif [[ "${FS}" == "ext4" ]]; then
   mkfs.ext4 "${ROOT_PART}"
   mount "${ROOT_PART}" /mnt
@@ -395,11 +377,6 @@ if [[ -d /sys/firmware/efi ]]; then
   mkdir -p /mnt/boot
   mount "${EFI_PART}" /mnt/boot
 fi
-
-BOOT_UUID=$(blkid -s UUID -o value "${partition2}")
-
-mkdir -p /mnt/boot
-mount -U "${partition2}" /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
   echo "Drive is not mounted can not continue"
