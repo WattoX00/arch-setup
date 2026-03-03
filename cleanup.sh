@@ -43,7 +43,7 @@ configure_sound
 
 echo "Installing new bashrc..."
 cp -f ~/.local/share/dwm-wattox/.bashrc ~/.bashrc
-
+source ~/.bashrc
 echo
 echo "IMPORTANT:"
 echo "Restart your shell or run:"

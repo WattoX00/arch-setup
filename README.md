@@ -6,6 +6,32 @@ Inspired by [ChrisTitusTech](https://github.com/ChrisTitusTech).
 
 ## 🚀 Installation
 
+## DWM-wattox only:
+
+Pre setup things:
+you should have: basic user loged in (so, not in the root), network, git, a package manager, a basic TTY... then:
+
+### 1. Clone the git repo
+
+```bash
+git clone https://github.com/wattox00/arch-setup.git
+cd arch-setup
+chmod +x dwm-wattox
+bash dwm-wattox.sh
+```
+
+### 2. Run cleanup:
+
+The dwm wattox.sh will copy a cleanup file into the home folder.
+Running it will remove any unesessary folders and files that was used for the installtions, and automations, including the cleanup.sh file.
+It will copy my bash files.
+It will ask for sound setup, and run pipx ensurepath and source ~/.bashrc
+
+```bash
+cd
+bash cleanup.sh
+```
+
 ### 1. Run the Bootstrap Script
 
 ```bash
