@@ -1,8 +1,10 @@
 # Arch Linux Installation Script
 
-A streamlined Arch Linux setup script designed to make installation cleaner, faster, and tailored to my workflow.
+![Status](https://img.shields.io/badge/status-active-success?style=for-the-badge)
+![Deployment Status](https://img.shields.io/github/deployments/wattox00/arch-setup/github-pages?label=Install%20Script&style=for-the-badge)
+[![License](https://img.shields.io/github/license/wattox00/arch-setup?style=for-the-badge)](https://github.com/WattoX00/arch-setup/blob/main/LICENSE)
 
-Inspired by [ChrisTitusTech](https://github.com/ChrisTitusTech).
+A streamlined Arch Linux setup script designed to make installation cleaner, faster, and tailored to my workflow.
 
 ## 🚀 Installation
 
@@ -144,5 +146,6 @@ Thanks for being part of the community 🤝
 
 ## 📄 License
 
+Inspired by [ChrisTitusTech](https://github.com/ChrisTitusTech).
 This project is licensed under the **MIT License**.  
 See the [LICENSE](LICENSE) file for full details.
