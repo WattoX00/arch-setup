@@ -7,6 +7,8 @@ Inspired by [ChrisTitusTech](https://github.com/ChrisTitusTech).
 ## 🚀 Installation
 
 ## DWM-wattox only
+<details>
+<summary>Click to expand</summary>
 
 ### Pre-setup requirements
 
@@ -52,7 +54,11 @@ cd ~
 bash cleanup.sh
 ```
 
+</details>
+
 ## Full setup from fresh booted arch iso:
+<details>
+<summary>Click to expand</summary>
 
 ### 1. Run the Bootstrap Script
 
@@ -80,7 +86,7 @@ At this point, you are free to continue however you like:
 
 - Customize everything manually
 
-- The base system is ready — the rest is up to you.
+- The base system is ready - the rest is up to you.
 
 #### Optional: Install dwm-wattox
 
@@ -91,6 +97,7 @@ If you want to use my custom window manager setup, follow the steps below.
 Start a new shell session, then run:
 
 ```bash
+  cd ~
   bash arch-setup/dwm-wattox.sh
 ```
 
@@ -102,6 +109,8 @@ bash cleanup.sh
 
 ⚠️ Note: A full reboot is not required. Logging out and back in is usually enough to apply environment and service changes. Reboot only if you encounter issues.
 
+</details>
+
 #### Starting dwm
 
 After logging into a TTY session, start dwm with:
@@ -112,7 +121,7 @@ startx
 
 #### Keybinding
 
-SUPER + / → Open commands menu
+SUPER + / -> Open commands menu
 (SUPER = Windows key)
 
 Enjoy! 🎉
