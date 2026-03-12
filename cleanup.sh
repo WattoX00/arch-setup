@@ -47,10 +47,7 @@ source ~/.bashrc
 echo
 echo "IMPORTANT:"
 echo "Restart your shell or run:"
-echo "source ~/.bashrc" | xclip -selection clipboard
 echo "  source ~/.bashrc"
-echo "Or just press CTRL+V to paste the command in"
-echo
 echo "Setup complete."
 
 SETUP_DIR="$HOME/arch-setup"
