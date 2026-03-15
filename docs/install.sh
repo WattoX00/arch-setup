@@ -429,6 +429,7 @@ arch-chroot /mnt /usr/bin/env \
   USERNAME="${USERNAME}" \
   PASSWORD="${PASSWORD}" \
   NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
+  GPU_TYPE="${gpu_type}" \
   bash <<EOF
 
 echo -ne "
@@ -553,8 +554,6 @@ Creating Grub Boot Menu
 "
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 
-echo -e "Updating grub..."
-grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
 echo -ne "
