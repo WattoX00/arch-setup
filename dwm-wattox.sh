@@ -9,7 +9,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/bibata.sh"
 . "$SCRIPT_DIR/todol.sh"
 . "$SCRIPT_DIR/nvim.sh"
-. "$SCRIPT_DIR/fastfetch.sh"
 
 setupDWM() {
   printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
