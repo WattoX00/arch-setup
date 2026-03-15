@@ -502,18 +502,19 @@ echo -ne "
 Installing Graphics Drivers
 "
 # Graphics Drivers find and install
-if echo "${gpu_type}" | grep -E "NVIDIA|GeForce"; then
+if echo "\${GPU_TYPE}" | grep -E "NVIDIA|GeForce"; then
     echo "Installing NVIDIA drivers: nvidia-lts"
     pacman -S --noconfirm --needed nvidia-lts
-elif echo "${gpu_type}" | grep 'VGA' | grep -E "Radeon|AMD"; then
+elif echo "\${GPU_TYPE}" | grep 'VGA' | grep -E "Radeon|AMD"; then
     echo "Installing AMD drivers: xf86-video-amdgpu"
     pacman -S --noconfirm --needed xf86-video-amdgpu
-elif echo "${gpu_type}" | grep -E "Integrated Graphics Controller"; then
+elif echo "\${GPU_TYPE}" | grep -E "Integrated Graphics Controller"; then
     echo "Installing Intel drivers:"
-    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
-elif echo "${gpu_type}" | grep -E "Intel Corporation UHD"; then
+    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-utils lib32-mesa
+
+elif echo "\${GPU_TYPE}" | grep -E "Intel Corporation UHD"; then
     echo "Installing Intel UHD drivers:"
-    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
+    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-utils lib32-mesa
 fi
 
 echo -ne "
@@ -524,7 +525,7 @@ useradd -m -G wheel,libvirt -s /bin/bash $USERNAME
 echo "$USERNAME created, home directory created, added to wheel and libvirt group, default shell set to /bin/bash"
 echo "$USERNAME:$PASSWORD" | chpasswd
 echo "$USERNAME password set"
-echo $NAME_OF_MACHINE > /etc/hostname
+echo $NAME_OF_MACHINE >/etc/hostname
 
 echo -ne "
 Cloning arch-setup repository
@@ -542,9 +543,9 @@ Installing GRUB Bootloader
 "
 
 if [[ -d "/sys/firmware/efi" ]]; then
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+  grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
-    grub-install --target=i386-pc ${DISK}
+  grub-install --target=i386-pc ${DISK}
 fi
 
 grub-mkconfig -o /boot/grub/grub.cfg
