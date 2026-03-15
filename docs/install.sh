@@ -304,7 +304,7 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 echo -ne "
 Setting up $iso mirrors for faster downloads
 "
-reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country "$iso" --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Syy --noconfirm
 if [[ $(grep -c "Server =" /etc/pacman.d/mirrorlist) -lt 5 ]]; then #check if there are less than 5 mirrors
   cp /etc/pacman.d/mirrorlist.bak /etc/pacman.d/mirrorlist
