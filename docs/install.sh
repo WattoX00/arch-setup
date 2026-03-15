@@ -535,7 +535,7 @@ su - "$USERNAME" -c "
 cd ~ &&
 git clone https://github.com/wattox00/arch-setup &&
 cd arch-setup &&
-chmod +x dwm-wattox
+chmod +x dwm-wattox.sh
 "
 
 echo -ne "
