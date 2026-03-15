@@ -362,13 +362,18 @@ if [[ "${FS}" == "btrfs" ]]; then
   mount "${ROOT_PART}" /mnt
   btrfs subvolume create /mnt/@
   btrfs subvolume create /mnt/@home
+  btrfs subvolume create /mnt/@var_log
+  btrfs subvolume create /mnt/@var_cache_pacman_pkg
+  btrfs subvolume create /mnt/@snapshots
   umount /mnt
-
   mount -o ${MOUNT_OPTIONS},subvol=@ "${ROOT_PART}" /mnt
-  mkdir -p /mnt/home
+  mkdir -p /mnt/{home,.snapshots,var/log,var/cache/pacman/pkg}
   mount -o ${MOUNT_OPTIONS},subvol=@home "${ROOT_PART}" /mnt/home
+  mount -o ${MOUNT_OPTIONS},subvol=@snapshots "${ROOT_PART}" /mnt/.snapshots
+  mount -o ${MOUNT_OPTIONS},subvol=@var_log "${ROOT_PART}" /mnt/var/log
+  mount -o ${MOUNT_OPTIONS},subvol=@var_cache_pacman_pkg "${ROOT_PART}" /mnt/var/cache/pacman/pkg
 elif [[ "${FS}" == "ext4" ]]; then
-  mkfs.ext4 "${ROOT_PART}"
+  mkfs.ext4 -F "${ROOT_PART}"
   mount "${ROOT_PART}" /mnt
 fi
 
@@ -548,13 +553,13 @@ else
   grub-install --target=i386-pc ${DISK}
 fi
 
-grub-mkconfig -o /boot/grub/grub.cfg
 
 echo -ne "
 Creating Grub Boot Menu
 "
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 
+grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
 echo -ne "
