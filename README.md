@@ -68,7 +68,8 @@ bash cleanup.sh
 bash <(curl -fsSL wattox00.github.io/arch-setup/install.sh)
 ```
 
-This will install and configure:
+<details>
+<summary>This will install and configure:</summary>
 
 - A basic user account
 
@@ -78,7 +79,11 @@ This will install and configure:
 
 - Essential system configuration
 
-At this point, you are free to continue however you like:
+</details>
+
+
+<details>
+<summary>At this point, you are free to continue however you like:</summary>
 
 - Install your preferred desktop environment
 
@@ -89,6 +94,8 @@ At this point, you are free to continue however you like:
 - Customize everything manually
 
 - The base system is ready - the rest is up to you.
+
+</details>
 
 #### Optional: Install dwm-wattox
 
@@ -113,7 +120,10 @@ bash cleanup.sh
 
 </details>
 
-#### Starting dwm
+
+<details>
+<summary>Starting dwm</summary>
+
 
 After logging into a TTY session, start dwm with:
 
@@ -129,6 +139,8 @@ SUPER + / -> Open commands menu
 Enjoy! 🎉
 
 For more check out the original dwm-wattox page: [HERE](https://github.com/WattoX00/dwm-wattox)
+
+</details>
 
 ## ❤️ Support
 
