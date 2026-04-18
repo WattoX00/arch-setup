@@ -70,6 +70,7 @@ echo "Ensuring pipx path..."
 pipx ensurepath || true
 
 configure_sound
+configure_tlp
 
 echo "Installing new bashrc..."
 cp -f ~/.local/share/dwm-wattox/.bashrc ~/.bashrc
