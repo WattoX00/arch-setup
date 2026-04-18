@@ -2,7 +2,7 @@
 set -euo pipefail
 
 configure_sound() {
-  read -rp "Do you want to install and configure PipeWire sound? SKIP THIS ON PC (y/N): " answer
+  read -rp "Do you want to install and configure PipeWire sound? SKIP THIS ON VM (y/N): " answer
   case "$answer" in
   [yY] | [yY][eE][sS])
 
