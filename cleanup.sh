@@ -36,6 +36,36 @@ configure_sound() {
   esac
 }
 
+configure_tlp() {
+  read -rp "Install and configure TLP (recommended for laptops)? (y/N): " answer
+  case "$answer" in
+  [yY] | [yY][eE][sS])
+
+    case "${PACKAGER:-pacman}" in
+    pacman)
+      "${ESCALATION_TOOL:-sudo}" pacman -S --needed --noconfirm tlp tlp-rdw
+      ;;
+    *)
+      echo "Unsupported package manager: $PACKAGER"
+      return 1
+      ;;
+    esac
+
+    sudo systemctl mask power-profiles-daemon.service 2>/dev/null || true
+
+    sudo systemctl enable --now tlp.service
+
+    sudo tlp start
+
+    echo "TLP configured. Current status:"
+    tlp-stat -s
+    ;;
+  *)
+    echo "Skipping TLP setup."
+    ;;
+  esac
+}
+
 echo "Ensuring pipx path..."
 pipx ensurepath || true
 
