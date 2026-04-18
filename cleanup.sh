@@ -6,7 +6,7 @@ configure_sound() {
   case "$answer" in
   [yY] | [yY][eE][sS])
 
-    case "${PACKAGER:-}" in
+    case "${PACKAGER:-pacman}" in
     pacman)
       "${ESCALATION_TOOL:-sudo}" pacman -S --needed --noconfirm \
         pipewire pipewire-alsa pipewire-pulse wireplumber alsa-utils
