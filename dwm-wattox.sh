@@ -141,8 +141,11 @@ setupAlacrittyConfig
 # rofi config
 setupRofiConfig
 
-# My python todo app
+# Todo app
 installTodol
+
+# Music player app
+installLysn
 
 # Nvim setup with lazyvim
 installLazyvim
