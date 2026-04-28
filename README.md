@@ -76,7 +76,9 @@ bash cleanup.sh
 
 ### Pre-setup requirements
 
-You should have:
+<details>
+<summary>Click to expand</summary>
+ou should have:
 
 - A basic user account logged in (not root)
 - Network connection
@@ -85,6 +87,8 @@ You should have:
 - A basic TTY
 
 Then continue with the steps below.
+
+</details>
 
 ### 1. Clone the Git repository
 
@@ -99,6 +103,8 @@ bash dwm-wattox.sh
 
 The dwm-wattox.sh script will copy a cleanup.sh file into your home folder.
 
+<details>
+<summary>Click to expand</summary>
 Running it will:
 
 - Remove unnecessary folders and files used during installation and automation
@@ -112,6 +118,8 @@ Running it will:
 - Run pipx ensurepath
 
 - Reload your Bash configuration
+
+</details>
 
 ```bash
 cd ~
