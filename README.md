@@ -58,7 +58,7 @@ bash cleanup.sh
 
 </details>
 
-## Full setup from fresh booted arch iso:
+## Full setup from fresh booted arch iso
 <details>
 <summary>Click to expand</summary>
 
