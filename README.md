@@ -8,56 +8,6 @@ A streamlined Arch Linux setup script designed to make installation cleaner, fas
 
 ## 🚀 Installation
 
-## DWM-wattox only
-<details>
-<summary>Click to expand</summary>
-
-### Pre-setup requirements
-
-You should have:
-
-- A basic user account logged in (not root)
-- Network connection
-- `git`
-- A package manager (e.g pacman)
-- A basic TTY
-
-Then continue with the steps below.
-
-### 1. Clone the Git repository
-
-```bash
-git clone https://github.com/wattox00/arch-setup.git
-cd arch-setup
-chmod +x dwm-wattox.sh
-bash dwm-wattox.sh
-```
-
-### 2. Run cleanup
-
-The dwm-wattox.sh script will copy a cleanup.sh file into your home folder.
-
-Running it will:
-
-- Remove unnecessary folders and files used during installation and automation
-
-- Remove the cleanup.sh file itself
-
-- Copy my Bash configuration files
-
-- Ask for sound setup
-
-- Run pipx ensurepath
-
-- Reload your Bash configuration
-
-```bash
-cd ~
-bash cleanup.sh
-```
-
-</details>
-
 ## Full setup from fresh booted arch iso
 <details>
 <summary>Click to expand</summary>
@@ -120,6 +70,55 @@ bash cleanup.sh
 
 </details>
 
+## DWM-wattox only
+<details>
+<summary>Click to expand</summary>
+
+### Pre-setup requirements
+
+You should have:
+
+- A basic user account logged in (not root)
+- Network connection
+- `git`
+- A package manager (e.g pacman)
+- A basic TTY
+
+Then continue with the steps below.
+
+### 1. Clone the Git repository
+
+```bash
+git clone https://github.com/wattox00/arch-setup.git
+cd arch-setup
+chmod +x dwm-wattox.sh
+bash dwm-wattox.sh
+```
+
+### 2. Run cleanup
+
+The dwm-wattox.sh script will copy a cleanup.sh file into your home folder.
+
+Running it will:
+
+- Remove unnecessary folders and files used during installation and automation
+
+- Remove the cleanup.sh file itself
+
+- Copy my Bash configuration files
+
+- Ask for sound setup
+
+- Run pipx ensurepath
+
+- Reload your Bash configuration
+
+```bash
+cd ~
+bash cleanup.sh
+```
+
+</details>
 
 <details>
 <summary>Starting dwm</summary>
