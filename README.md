@@ -31,7 +31,6 @@ bash <(curl -fsSL wattox00.github.io/arch-setup/install.sh)
 
 </details>
 
-
 <details>
 <summary>At this point, you are free to continue however you like:</summary>
 
@@ -77,8 +76,8 @@ bash cleanup.sh
 ### Pre-setup requirements
 
 <details>
-<summary>Click to expand</summary>
-ou should have:
+<summary>You should have:</summary>
+
 
 - A basic user account logged in (not root)
 - Network connection
@@ -104,8 +103,7 @@ bash dwm-wattox.sh
 The dwm-wattox.sh script will copy a cleanup.sh file into your home folder.
 
 <details>
-<summary>Click to expand</summary>
-Running it will:
+<summary>Running it will:</summary>
 
 - Remove unnecessary folders and files used during installation and automation
 
