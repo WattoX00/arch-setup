@@ -18,24 +18,24 @@ fi
 root_check() {
   if [[ "$(id -u)" != "0" ]]; then
     echo -ne "ERROR! This script must be run under the 'root' user!\n"
-    exit 0
+    exit 1
   fi
 }
 
 docker_check() {
   if awk -F/ '$2 == "docker"' /proc/self/cgroup | read -r; then
     echo -ne "ERROR! Docker container is not supported (at the moment)\n"
-    exit 0
+    exit 1
   elif [[ -f /.dockerenv ]]; then
     echo -ne "ERROR! Docker container is not supported (at the moment)\n"
-    exit 0
+    exit 1
   fi
 }
 
 arch_check() {
   if [[ ! -e /etc/arch-release ]]; then
     echo -ne "ERROR! This script must be run in Arch Linux!\n"
-    exit 0
+    exit 1
   fi
 }
 
@@ -43,7 +43,7 @@ pacman_check() {
   if [[ -f /var/lib/pacman/db.lck ]]; then
     echo "ERROR! Pacman is blocked."
     echo -ne "If not running remove /var/lib/pacman/db.lck.\n"
-    exit 0
+    exit 1
   fi
 }
 
@@ -290,7 +290,7 @@ clear
 keymap
 
 echo "Setting up mirrors for optimal download"
-iso=$(curl -4 ifconfig.io/country_code)
+iso=$(curl -4 -fs --max-time 10 ifconfig.io/country_code || true)
 timedatectl set-ntp true
 pacman -Syy --noconfirm
 pacman -Sy --noconfirm archlinux-keyring
@@ -304,7 +304,11 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 echo -ne "
 Setting up $iso mirrors for faster downloads
 "
-reflector --country "$iso" --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+if [[ -n "$iso" ]]; then
+  reflector --country "$iso" --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+else
+  reflector --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+fi
 pacman -Syy --noconfirm
 if [[ $(grep -c "Server =" /etc/pacman.d/mirrorlist) -lt 5 ]]; then #check if there are less than 5 mirrors
   cp /etc/pacman.d/mirrorlist.bak /etc/pacman.d/mirrorlist
@@ -395,9 +399,9 @@ echo -ne "
 Arch Install on Main Drive
 "
 if [[ ! -d "/sys/firmware/efi" ]]; then
-  pacstrap /mnt base base-devel linux-lts linux-firmware --noconfirm --needed
+  pacstrap /mnt base base-devel linux-lts linux-firmware nano --noconfirm --needed
 else
-  pacstrap /mnt base base-devel linux-lts linux-firmware efibootmgr --noconfirm --needed
+  pacstrap /mnt base base-devel linux-lts linux-firmware efibootmgr nano --noconfirm --needed
 fi
 echo "keyserver hkp://keyserver.ubuntu.com" >>/mnt/etc/pacman.d/gnupg/gpg.conf
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
@@ -427,161 +431,167 @@ fi
 
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
 
+# Console keymap -> X11 layout (they differ for a few entries).
+# SDDM and dwm use the X11 layout, not the console keymap.
+case "${KEYMAP}" in
+uk) XKB_LAYOUT=gb XKB_VARIANT="" ;;
+cf) XKB_LAYOUT=ca XKB_VARIANT=fr ;;
+et) XKB_LAYOUT=ee XKB_VARIANT="" ;;
+fa) XKB_LAYOUT=ir XKB_VARIANT="" ;;
+sg) XKB_LAYOUT=ch XKB_VARIANT="" ;;
+*) XKB_LAYOUT="${KEYMAP}" XKB_VARIANT="" ;;
+esac
+
+# NOTE: the heredoc delimiter is quoted ('EOF'), so nothing below is expanded
+# by the live ISO shell. Everything is expanded inside the chroot, and values
+# arrive through the environment. This keeps passwords with $ ` " \ intact.
 arch-chroot /mnt /usr/bin/env \
   DISK="${DISK}" \
+  FS="${FS}" \
   KEYMAP="${KEYMAP}" \
+  XKB_LAYOUT="${XKB_LAYOUT}" \
+  XKB_VARIANT="${XKB_VARIANT}" \
   TIMEZONE="${TIMEZONE}" \
   USERNAME="${USERNAME}" \
   PASSWORD="${PASSWORD}" \
   NAME_OF_MACHINE="${NAME_OF_MACHINE}" \
   GPU_TYPE="${gpu_type}" \
-  bash <<EOF
+  bash <<'EOF'
 
 echo -ne "
 Network Setup
 "
 pacman -S --noconfirm --needed networkmanager
-systemctl enable NetworkManager
-echo -ne "
-Setting up mirrors for optimal download
-"
-pacman -S --noconfirm --needed pacman-contrib curl terminus-font
-pacman -S --noconfirm --needed reflector rsync grub arch-install-scripts git ntp wget
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
+systemctl enable NetworkManager.service
 
-nc=$(grep -c ^"cpu cores" /proc/cpuinfo)
 echo -ne "
-You have " $nc" cores. And
-changing the makeflags for " $nc" cores. Aswell as
-changing the compression settings.
+Installing base tools
 "
-TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-if [[  $TOTAL_MEM -gt 8000000 ]]; then
-sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
-sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
+pacman -S --noconfirm --needed pacman-contrib curl terminus-font reflector rsync grub arch-install-scripts git wget nano
+if [[ "${FS}" == "btrfs" ]]; then
+  pacman -S --noconfirm --needed btrfs-progs
 fi
+
+nc=$(nproc)
 echo -ne "
-Setup Language to US and set locale
+You have ${nc} cores. Changing makeflags and compression settings.
+"
+TOTAL_MEM=$(grep -i 'memtotal' /proc/meminfo | grep -o '[[:digit:]]*')
+if [[ $TOTAL_MEM -gt 8000000 ]]; then
+  sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j${nc}\"/g" /etc/makepkg.conf
+  sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T ${nc} -z -)/g" /etc/makepkg.conf
+fi
+
+echo -ne "
+Setup language, locale and timezone
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
-timedatectl --no-ask-password set-timezone ${TIMEZONE}
-timedatectl --no-ask-password set-ntp 1
-localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
-ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
+# timedatectl/localectl do not work inside a chroot (no running systemd),
+# so write the config files directly.
+echo "LANG=en_US.UTF-8" >/etc/locale.conf
+ln -sf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime
+hwclock --systohc
 
-# Set keymaps
-echo "KEYMAP=${KEYMAP}" > /etc/vconsole.conf
-echo "XKBLAYOUT=${KEYMAP}" >> /etc/vconsole.conf
-echo "Keymap set to: ${KEYMAP}"
+# Console keymap (tty)
+echo "KEYMAP=${KEYMAP}" >/etc/vconsole.conf
+echo "Console keymap set to: ${KEYMAP}"
 
-# Add sudo no password rights
-sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
-sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
+# X11 keymap (SDDM greeter + dwm session)
+mkdir -p /etc/X11/xorg.conf.d
+cat >/etc/X11/xorg.conf.d/00-keyboard.conf <<XKB
+Section "InputClass"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "${XKB_LAYOUT}"
+    Option "XkbVariant" "${XKB_VARIANT}"
+EndSection
+XKB
+echo "X11 layout set to: ${XKB_LAYOUT} ${XKB_VARIANT}"
 
-#Add parallel downloading
+# pacman: parallel downloads, colors, easter egg, multilib
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-
-#Set colors and enable the easter egg
 sed -i 's/^#Color/Color\nILoveCandy/' /etc/pacman.conf
-
-#Enable multilib
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 pacman -Syy --noconfirm
 
 echo -ne "
 Installing Microcode
 "
-# determine processor type and install microcode
 if grep -q "GenuineIntel" /proc/cpuinfo; then
-    echo "Installing Intel microcode"
-    pacman -S --noconfirm --needed intel-ucode
+  echo "Installing Intel microcode"
+  pacman -S --noconfirm --needed intel-ucode
 elif grep -q "AuthenticAMD" /proc/cpuinfo; then
-    echo "Installing AMD microcode"
-    pacman -S --noconfirm --needed amd-ucode
+  echo "Installing AMD microcode"
+  pacman -S --noconfirm --needed amd-ucode
 else
-    echo "Unable to determine CPU vendor. Skipping microcode installation."
+  echo "Unable to determine CPU vendor. Skipping microcode installation."
 fi
 
 echo -ne "
 Installing Graphics Drivers
 "
-# Graphics Drivers find and install
-if echo "\${GPU_TYPE}" | grep -E "NVIDIA|GeForce"; then
-    echo "Installing NVIDIA drivers: nvidia-lts"
-    pacman -S --noconfirm --needed nvidia-lts
-elif echo "\${GPU_TYPE}" | grep 'VGA' | grep -E "Radeon|AMD"; then
-    echo "Installing AMD drivers: xf86-video-amdgpu"
-    pacman -S --noconfirm --needed xf86-video-amdgpu
-elif echo "\${GPU_TYPE}" | grep -E "Integrated Graphics Controller"; then
-    echo "Installing Intel drivers:"
-    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-utils lib32-mesa
-
-elif echo "\${GPU_TYPE}" | grep -E "Intel Corporation UHD"; then
-    echo "Installing Intel UHD drivers:"
-    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-utils lib32-mesa
+# mesa is the baseline for X11 on everything (also covers VMs via modesetting).
+# The vendor checks are independent ifs, so hybrid laptops get both drivers.
+pacman -S --noconfirm --needed mesa lib32-mesa
+if echo "${GPU_TYPE}" | grep -qiE "NVIDIA|GeForce"; then
+  echo "Installing NVIDIA drivers: nvidia-lts"
+  pacman -S --noconfirm --needed nvidia-lts nvidia-utils lib32-nvidia-utils
+fi
+if echo "${GPU_TYPE}" | grep -qiE "Radeon|AMD|ATI"; then
+  echo "Installing AMD drivers"
+  pacman -S --noconfirm --needed vulkan-radeon lib32-vulkan-radeon
+fi
+if echo "${GPU_TYPE}" | grep -qi "Intel"; then
+  echo "Installing Intel drivers"
+  pacman -S --noconfirm --needed vulkan-intel lib32-vulkan-intel intel-media-driver libva-intel-driver libva-utils libvdpau-va-gl
 fi
 
 echo -ne "
 Adding User
 "
-groupadd libvirt
-useradd -m -G wheel,libvirt -s /bin/bash $USERNAME
-echo "$USERNAME created, home directory created, added to wheel and libvirt group, default shell set to /bin/bash"
+groupadd -f libvirt
+useradd -m -G wheel,video,libvirt -s /bin/bash "$USERNAME"
 echo "$USERNAME:$PASSWORD" | chpasswd
-echo "$USERNAME password set"
-echo $NAME_OF_MACHINE >/etc/hostname
+echo "$USERNAME created (groups: wheel, video, libvirt), password set"
+echo "$NAME_OF_MACHINE" >/etc/hostname
+cat >/etc/hosts <<HOSTS
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   ${NAME_OF_MACHINE}.localdomain ${NAME_OF_MACHINE}
+HOSTS
+
+# sudo for wheel (password required)
+sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 echo -ne "
 Cloning arch-setup repository
 "
-
-su - "$USERNAME" -c "
-cd ~ &&
-git clone https://github.com/wattox00/arch-setup &&
-cd arch-setup &&
-chmod +x dwm-wattox.sh
-"
+su - "$USERNAME" -c 'cd ~ && git clone https://github.com/wattox00/arch-setup && chmod +x arch-setup/dwm-wattox.sh'
 
 echo -ne "
 Installing GRUB Bootloader
 "
-
 if [[ -d "/sys/firmware/efi" ]]; then
   grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 else
-  grub-install --target=i386-pc ${DISK}
+  grub-install --target=i386-pc "${DISK}"
 fi
-
 
 echo -ne "
 Creating Grub Boot Menu
 "
-sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
-
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
 echo -ne "
 Enabling Essential Services
 "
-ntpd -qg
-systemctl enable ntpd.service
-echo "  NTP enabled"
-systemctl disable dhcpcd.service
-echo "  DHCP disabled"
-systemctl enable NetworkManager.service
-echo "  NetworkManager enabled"
+# systemd-timesyncd replaces ntp: no extra package, and `ntpd -qg` cannot
+# work reliably inside a chroot anyway.
+systemctl enable systemd-timesyncd.service
 systemctl enable reflector.timer
-echo "  Reflector enabled"
-
-echo -ne "
-Cleaning
-"
-# Remove no password sudo rights
-sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
-sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
-# Add sudo rights
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+systemctl enable fstrim.timer
+echo "  NetworkManager, timesyncd, reflector and fstrim enabled"
 EOF
