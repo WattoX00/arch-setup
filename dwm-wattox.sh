@@ -9,12 +9,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/bibata.sh"
 . "$SCRIPT_DIR/todol.sh"
 . "$SCRIPT_DIR/nvim.sh"
+. "$SCRIPT_DIR/sddm.sh"
 
 setupDWM() {
   printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
   case "$PACKAGER" in # Install pre-Requisites
   pacman)
-    "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit polybar picom xdg-user-dirs xdg-desktop-portal-gtk gnome-keyring flatpak networkmanager network-manager-applet brightnessctl python-pipx nvim noto-fonts-emoji noto-fonts-cjk ttf-meslo-nerd firefox fastfetch pipewire pavucontrol nwg-look eza zoxide redshift clipmenu rofimoji starship
+    "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-setxkbmap xf86-input-libinput polybar picom xdg-user-dirs xdg-desktop-portal-gtk gnome-keyring flatpak networkmanager network-manager-applet brightnessctl python-pipx neovim noto-fonts-emoji noto-fonts-cjk ttf-meslo-nerd firefox fastfetch pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol eza zoxide redshift clipmenu rofimoji starship
     ;;
   *)
     printf "%b\n" "${RED}Unsupported package manager: ""$PACKAGER""${RC}"
@@ -86,7 +87,7 @@ clone_config_folders() {
   cp -rf "$HOME/.local/share/dwm-wattox/scripts/." "$HOME/.local/bin/"
 
   # Iterate over all directories in config/*
-  for dir in config/*/; do
+  for dir in "$HOME"/.local/share/dwm-wattox/config/*/; do
     # Extract the directory name
     dir_name=$(basename "$dir")
 
@@ -149,6 +150,9 @@ installLysn
 
 # Nvim setup with lazyvim
 installLazyvim
+
+# Login screen: SDDM (X11) + theme + dwm session entry
+setupSddm
 
 # Copy cleanup
 
