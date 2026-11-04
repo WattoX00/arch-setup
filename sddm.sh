@@ -59,20 +59,37 @@ EOF
 }
 
 installDwmSession() {
-  # SDDM lists whatever is in /usr/share/xsessions. dwm's stock Makefile
-  # does not install a .desktop file, so create one if it's missing.
-  if [ ! -f /usr/share/xsessions/dwm.desktop ]; then
-    printf "%b\n" "${YELLOW}Creating dwm session entry...${RC}"
-    "$ESCALATION_TOOL" mkdir -p /usr/share/xsessions
-    "$ESCALATION_TOOL" tee /usr/share/xsessions/dwm.desktop >/dev/null <<EOF
+  printf "%b\n" "${YELLOW}Installing dwm session (SDDM entry + launcher)...${RC}"
+
+  # SDDM does NOT read ~/.xinitrc. This launcher makes SDDM and startx share
+  # one startup file: it runs ~/.xinitrc if there is one, else plain dwm.
+  # Output goes to ~/.cache/dwm-session.log (overwritten each login).
+  "$ESCALATION_TOOL" tee /usr/local/bin/dwm-session >/dev/null <<'EOF'
+#!/bin/sh
+LOG="${XDG_CACHE_HOME:-$HOME/.cache}/dwm-session.log"
+mkdir -p "$(dirname "$LOG")"
+exec >"$LOG" 2>&1
+echo "=== dwm session started $(date) ==="
+if [ -x "$HOME/.xinitrc" ]; then
+  exec "$HOME/.xinitrc"
+elif [ -f "$HOME/.xinitrc" ]; then
+  exec sh "$HOME/.xinitrc"
+fi
+exec dwm
+EOF
+  "$ESCALATION_TOOL" chmod 755 /usr/local/bin/dwm-session
+
+  # SDDM lists whatever is in /usr/share/xsessions. Always (re)write it so the
+  # entry uses the launcher even if a stock dwm.desktop exists.
+  "$ESCALATION_TOOL" mkdir -p /usr/share/xsessions
+  "$ESCALATION_TOOL" tee /usr/share/xsessions/dwm.desktop >/dev/null <<'EOF'
 [Desktop Entry]
 Name=dwm
 Comment=Dynamic window manager
-Exec=dwm
+Exec=/usr/local/bin/dwm-session
 Icon=dwm
 Type=XSession
 EOF
-  fi
 }
 
 enableSddm() {
