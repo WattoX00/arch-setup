@@ -66,6 +66,39 @@ configure_tlp() {
   esac
 }
 
+configure_nightshift_location() {
+  echo
+  echo "Configuring Nightshift location..."
+
+  "${ESCALATION_TOOL:-sudo}" pacman -S --needed --noconfirm python-geopy
+
+  local latlon
+
+  latlon="$(python - <<'PY'
+from geopy.geocoders import Nominatim
+
+try:
+    geo = Nominatim(user_agent="nightshift-setup")
+    place = input("Location (city): ").strip()
+    loc = geo.geocode(place, timeout=10)
+
+    if loc:
+        print(f"{loc.latitude}:{loc.longitude}")
+except Exception:
+    pass
+PY
+)" || true
+
+  latlon="${latlon:-0.0:0.0}"
+
+  mkdir -p "$HOME/.config/nightshift"
+  printf '%s\n' "$latlon" > "$HOME/.config/nightshift/location"
+
+  echo "Nightshift coordinates saved: $latlon"
+}
+
+configure_nightshift_location
+
 echo "Ensuring pipx path..."
 pipx ensurepath || true
 
