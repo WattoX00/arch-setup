@@ -10,7 +10,7 @@ SDDM_THEME_DIR="/usr/share/sddm/themes/$SDDM_THEME_NAME"
 # Available: astronaut, black_hole, cyberpunk, hyprland_kath, jake_the_dog,
 # japanese_aesthetic, pixel_sakura, pixel_sakura_static,
 # post-apocalyptic_hacker, purple_leaves
-SDDM_THEME_VARIANT="${SDDM_THEME_VARIANT:-japanese_aesthetic}"
+SDDM_THEME_VARIANT="${SDDM_THEME_VARIANT:-astronaut}"
 
 installSddmPackages() {
   printf "%b\n" "${YELLOW}Installing SDDM and theme dependencies...${RC}"
