@@ -15,7 +15,7 @@ setupDWM() {
   printf "%b\n" "${YELLOW}Installing DWM-Wattox...${RC}"
   case "$PACKAGER" in # Install pre-Requisites
   pacman)
-    "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-setxkbmap xf86-input-libinput polybar picom xdg-user-dirs xdg-desktop-portal-gtk gnome-keyring flatpak networkmanager network-manager-applet brightnessctl python-pipx neovim noto-fonts-emoji noto-fonts-cjk ttf-meslo-nerd firefox fastfetch pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol eza zoxide redshift clipmenu rofimoji starship
+    "$ESCALATION_TOOL" "$PACKAGER" -S --needed --noconfirm base-devel libx11 libxinerama libxft imlib2 git unzip flameshot mate-polkit rofi alacritty xclip thunar tumbler gvfs thunar-archive-plugin dunst feh nwg-look xorg-xprop xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-setxkbmap xf86-input-libinput polybar picom xdg-user-dirs xdg-desktop-portal-gtk gnome-keyring flatpak networkmanager network-manager-applet brightnessctl python-pipx neovim noto-fonts-emoji noto-fonts-cjk ttf-meslo-nerd firefox chromium fastfetch pipewire pipewire-pulse pipewire-alsa wireplumber pavucontrol eza zoxide redshift procps-ng util-linux clipmenu rofimoji starship
     ;;
   *)
     printf "%b\n" "${RED}Unsupported package manager: ""$PACKAGER""${RC}"
@@ -34,7 +34,8 @@ makeDWM() {
     printf "%b\n" "${GREEN}DWM-wattox directory already exists, replacing..${RC}"
     cd "$HOME/.local/share/dwm-wattox" && git pull
   fi
-  "$ESCALATION_TOOL" make clean install # Run make clean install
+  "$ESCALATION_TOOL" make clean install USER_HOME="$HOME"
+  systemctl --user daemon-reload
 }
 
 install_nerd_font() {
@@ -85,6 +86,10 @@ clone_config_folders() {
 
   # Copy scripts to local bin
   cp -rf "$HOME/.local/share/dwm-wattox/scripts/." "$HOME/.local/bin/"
+  for script in "$HOME"/.local/share/dwm-wattox/scripts/*; do
+    [ -f "$script" ] || continue
+    chmod +x "$HOME/.local/bin/$(basename "$script")"
+  done
 
   # Iterate over all directories in config/*
   for dir in "$HOME"/.local/share/dwm-wattox/config/*/; do
@@ -99,6 +104,8 @@ clone_config_folders() {
       printf "%b\n" "${RED}Directory $dir_name does not exist, skipping${RC}"
     fi
   done
+
+  fc-cache -f
 }
 
 configure_backgrounds() {
