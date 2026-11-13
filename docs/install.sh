@@ -180,6 +180,31 @@ keymap() {
   export KEYMAP=$keymap
 }
 
+# @description Ask for swap size, with an autofilled suggestion based on RAM.
+swapsize() {
+  local ram_mb suggested
+  ram_mb=$(($(awk '/MemTotal/ {print $2}' /proc/meminfo) / 1024))
+
+  if ((ram_mb <= 2048)); then
+    suggested=$((ram_mb * 2))   # small machines: 2x RAM
+  elif ((ram_mb <= 8192)); then
+    suggested=$ram_mb           # mid-size: equal to RAM (hibernation-capable)
+  else
+    suggested=4096              # lots of RAM: 4 GB safety net
+  fi
+  suggested=$(((suggested + 255) / 256 * 256)) # round up to 256 MB
+
+  echo -ne "\nDetected ~$((ram_mb / 1024)) GB RAM. Suggested swap: ${suggested} MB (enter 0 for no swap)\n"
+  while true; do
+    read -r -e -i "${suggested}" -p "Swap size in MB: " SWAP_MB
+    if [[ "${SWAP_MB}" =~ ^[0-9]+$ ]]; then
+      break
+    fi
+    echo "Please enter a number."
+  done
+  export SWAP_MB
+}
+
 # @description Choose whether drive is SSD or not.
 drivessd() {
   echo -ne "
@@ -284,6 +309,8 @@ clear
 diskpart
 clear
 filesystem
+clear
+swapsize
 clear
 timezone
 clear
@@ -412,21 +439,20 @@ echo "
 "
 cat /mnt/etc/fstab
 echo -ne "
-Checking for low memory systems <8G
+Setting up swap
 "
-TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-if [[ $TOTAL_MEM -lt 8000000 ]]; then
-  # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
-  mkdir -p /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
-  if findmnt -n -o FSTYPE /mnt | grep -q btrfs; then
-    chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
+if ((SWAP_MB > 0)); then
+  mkdir -p /mnt/opt/swap
+  if [[ "${FS}" == "btrfs" ]]; then
+    # handles NOCOW, size and mkswap in one step
+    btrfs filesystem mkswapfile --size "${SWAP_MB}m" /mnt/opt/swap/swapfile
+  else
+    dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count="${SWAP_MB}" status=progress
+    chmod 600 /mnt/opt/swap/swapfile
+    mkswap /mnt/opt/swap/swapfile
   fi
-  dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
-  chmod 600 /mnt/opt/swap/swapfile # set permissions.
-  chown root /mnt/opt/swap/swapfile
-  mkswap /mnt/opt/swap/swapfile
   swapon /mnt/opt/swap/swapfile
-  echo "/opt/swap/swapfile    none    swap    sw    0    0" >>/mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
+  echo "/opt/swap/swapfile    none    swap    defaults    0    0" >>/mnt/etc/fstab
 fi
 
 gpu_type=$(lspci | grep -E "VGA|3D|Display")
