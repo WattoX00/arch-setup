@@ -8,6 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/rofi.sh"
 . "$SCRIPT_DIR/bibata.sh"
 . "$SCRIPT_DIR/todol.sh"
+. "$SCRIPT_DIR/usys.sh"
 . "$SCRIPT_DIR/nvim.sh"
 . "$SCRIPT_DIR/sddm.sh"
 
@@ -123,9 +124,31 @@ configure_backgrounds() {
   printf "%b\n" "Screenshots → $SC_DIR"
 }
 
+ask_yes_no() {
+  local prompt="$1" reply
+  while true; do
+    read -r -p "$prompt [Y/n]: " reply
+    case "${reply,,}" in
+    "" | y | yes) return 0 ;;
+    n | no) return 1 ;;
+    *) echo "Please answer y or n." ;;
+    esac
+  done
+}
+
 # syscheck
 checkEnv
 checkEscalationTool
+
+# syscheck
+checkEnv
+checkEscalationTool
+
+# optional packages
+INSTALL_TODOL=0 INSTALL_LYSN=0 INSTALL_USYS=0
+ask_yes_no "Install todol (todo app)?" && INSTALL_TODOL=1
+ask_yes_no "Install lysn (music player)?" && INSTALL_LYSN=1
+ask_yes_no "Install usys?" && INSTALL_USYS=1
 
 # Bibata cursor
 installBibata
@@ -150,10 +173,19 @@ setupAlacrittyConfig
 setupRofiConfig
 
 # Todo app
-installTodol
+if [ "$INSTALL_TODOL" = 1 ]; then
+  installTodol
+fi
 
 # Music player app
-installLysn
+if [ "$INSTALL_LYSN" = 1 ]; then
+  installLysn
+fi
+
+# usys
+if [ "$INSTALL_USYS" = 1 ]; then
+  installUsys
+fi
 
 # Nvim setup with lazyvim
 installLazyvim
