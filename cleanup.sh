@@ -66,35 +66,52 @@ configure_tlp() {
   esac
 }
 
+
 configure_nightshift_location() {
-  echo
-  echo "Configuring Nightshift location..."
+    echo
+    echo "Configuring Nightshift location..."
 
-  "${ESCALATION_TOOL:-sudo}" pacman -S --needed --noconfirm python-geopy
+    "${ESCALATION_TOOL:-sudo}" pacman -S --needed --noconfirm python-geopy
 
-  local latlon
+    local place latlon confirm
 
-  latlon="$(python - <<'PY'
+    read -rp "Enter your city (e.g. Debrecen, Hungary): " place
+
+    if [[ -z "$place" ]]; then
+        echo "No city entered. Location setup cancelled."
+        return 1
+    fi
+
+    latlon="$(CITY="$place" python - <<'PY'
+import os
 from geopy.geocoders import Nominatim
 
-try:
-    geo = Nominatim(user_agent="nightshift-setup")
-    place = input("Location (city): ").strip()
-    loc = geo.geocode(place, timeout=10)
+geo = Nominatim(user_agent="nightshift-setup")
+loc = geo.geocode(os.environ["CITY"], timeout=15)
 
-    if loc:
-        print(f"{loc.latitude}:{loc.longitude}")
-except Exception:
-    pass
+if loc:
+    print(f"{loc.latitude}:{loc.longitude}")
 PY
 )" || true
 
-  latlon="${latlon:-0.0:0.0}"
+    if [[ -z "$latlon" ]]; then
+        echo "Could not determine coordinates. Location setup cancelled."
+        return 1
+    fi
 
-  mkdir -p "$HOME/.config/nightshift"
-  printf '%s\n' "$latlon" > "$HOME/.config/nightshift/location"
+    echo
+    echo "Detected coordinates: $latlon"
+    read -rp "Are these coordinates correct? [Y/n] " confirm
 
-  echo "Nightshift coordinates saved: $latlon"
+    if [[ "$confirm" =~ ^[Nn] ]]; then
+        echo "Location setup cancelled."
+        return 1
+    fi
+
+    mkdir -p "$HOME/.config/nightshift"
+    printf '%s\n' "$latlon" > "$HOME/.config/nightshift/location"
+
+    echo "Nightshift coordinates saved: $latlon"
 }
 
 configure_nightshift_location
