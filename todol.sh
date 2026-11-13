@@ -11,3 +11,9 @@ installLysn() {
   export PATH="$HOME/.local/bin:$PATH"
   pipx install lysn
 }
+
+# Linux user manager
+installUsys() {
+  export PATH="$HOME/.local/bin:$PATH"
+  pipx install usys
+}
