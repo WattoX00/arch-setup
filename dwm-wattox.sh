@@ -8,7 +8,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 . "$SCRIPT_DIR/rofi.sh"
 . "$SCRIPT_DIR/bibata.sh"
 . "$SCRIPT_DIR/todol.sh"
-. "$SCRIPT_DIR/usys.sh"
 . "$SCRIPT_DIR/nvim.sh"
 . "$SCRIPT_DIR/sddm.sh"
 
