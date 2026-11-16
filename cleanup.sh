@@ -67,6 +67,7 @@ configure_tlp() {
 }
 
 
+
 configure_nightshift_location() {
     echo
     echo "Configuring Nightshift location..."
@@ -75,14 +76,17 @@ configure_nightshift_location() {
 
     local place latlon confirm
 
-    read -rp "Enter your city (e.g. Debrecen, Hungary): " place
+    # Default coordinates when no location is selected
+    latlon="0.0:0.0"
+
+    echo "Example: New York City, United States"
+    read -rp "Enter your city (leave empty to use default coordinates): " place
 
     if [[ -z "$place" ]]; then
-        echo "No city entered. Location setup cancelled."
-        return 1
-    fi
-
-    latlon="$(CITY="$place" python - <<'PY'
+        echo "No location selected or detected."
+        echo "Using default coordinates: $latlon"
+    else
+        latlon="$(CITY="$place" python - <<'PY'
 import os
 from geopy.geocoders import Nominatim
 
@@ -92,25 +96,29 @@ loc = geo.geocode(os.environ["CITY"], timeout=15)
 if loc:
     print(f"{loc.latitude}:{loc.longitude}")
 PY
-)" || true
+)" || latlon=""
 
-    if [[ -z "$latlon" ]]; then
-        echo "Could not determine coordinates. Location setup cancelled."
-        return 1
-    fi
+        if [[ -z "$latlon" ]]; then
+            echo "Could not detect your location."
+            echo "Nothing selected. Using default coordinates: 0.0:0.0"
+            latlon="0.0:0.0"
+        else
+            echo
+            echo "Detected coordinates: $latlon"
+            read -rp "Are these coordinates correct? [Y/n] " confirm
 
-    echo
-    echo "Detected coordinates: $latlon"
-    read -rp "Are these coordinates correct? [Y/n] " confirm
-
-    if [[ "$confirm" =~ ^[Nn] ]]; then
-        echo "Location setup cancelled."
-        return 1
+            if [[ "$confirm" =~ ^[Nn] ]]; then
+                echo "Location not confirmed."
+                echo "Using default coordinates: 0.0:0.0"
+                latlon="0.0:0.0"
+            fi
+        fi
     fi
 
     mkdir -p "$HOME/.config/nightshift"
     printf '%s\n' "$latlon" > "$HOME/.config/nightshift/location"
 
+    echo
     echo "Nightshift coordinates saved: $latlon"
 }
 
